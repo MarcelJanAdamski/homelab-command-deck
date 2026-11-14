@@ -11,9 +11,16 @@ It extends stock Homepage with an animated constellation background (theme "Nebu
 
 ![Overview, 2560 px](docs/screenshots/overview-2560.png)
 
-| | |
-|---|---|
-| ![Overview, 1920 px](docs/screenshots/overview-1920.png) | ![Mobile, 390 px](docs/screenshots/mobile-390.png) |
+**On the phone (390 px)** – top of the page, home-network deck, web deck:
+
+![Mobile, 390 px – three sections of the page](docs/screenshots/mobile-390.png)
+
+<details>
+<summary>Overview at 1920 px</summary>
+
+![Overview, 1920 px](docs/screenshots/overview-1920.png)
+
+</details>
 
 > **Language:** UI texts and most code comments are German (no i18n layer); the documentation is English.
 > **Demo data only:** place (Berlin), addresses (`10.0.0.x`), station and street are made up; the bookmarks are example links to public websites.
