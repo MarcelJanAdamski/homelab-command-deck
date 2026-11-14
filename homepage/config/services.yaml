@@ -1,0 +1,90 @@
+# Example (mock) data for the demo – not a real setup.
+# ──────────────────────────────────────────────────────────────
+#  Homepage – services (demo)
+#  https://gethomepage.dev/configs/services
+#  All addresses are made up (10.0.0.x). Hosts: 10.0.0.10 Server, 10.0.0.11 Mini-PC,
+#  10.0.0.20 NAS, 10.0.0.1 Router (see "hosts" in custom.js).
+#  The apps are generic examples – swap in your own. The NUMBER of groups and of entries per group
+#  matters for the layout (one row per group), the names do not.
+#  siteMonitor = reachability dot. The targets below are services inside the compose network
+#  (gateway, homepage itself), so the dots work out of the box. ONE tile (FreshRSS) points to an
+#  unreachable address on purpose, to show the offline state.
+#  Host notch: a tile gets a host tag when its name equals / starts another tile's name on a
+#  different host ("Pi-hole" on 10.0.0.10 + "Pi-hole 2" on 10.0.0.11).
+# ──────────────────────────────────────────────────────────────
+
+- Fotos:
+  - PhotoPrism:
+      icon: photoprism
+      href: http://10.0.0.10:2342
+      siteMonitor: http://gateway/sprit/health
+      description: Foto-Bibliothek mit Gesichts- und Ortserkennung
+
+- Dateien & Dokumente:
+  - Nextcloud:
+      icon: nextcloud
+      href: http://10.0.0.20:8080
+      siteMonitor: http://gateway/claude/health
+      description: Eigene Cloud für Dateien und Termine
+  - Syncthing:
+      icon: syncthing
+      href: http://10.0.0.10:8384
+      siteMonitor: http://gateway/muell/health
+      description: Ordner direkt zwischen Geräten abgleichen
+  - Calibre-Web:
+      icon: calibre-web
+      href: http://10.0.0.20:8083
+      siteMonitor: http://localhost:3000
+      description: E-Book-Sammlung im Browser lesen
+
+- Netzwerk & Security:
+  - Pi-hole:
+      icon: pi-hole
+      href: http://10.0.0.10:8053/admin
+      siteMonitor: http://gateway/sprit/health
+      description: DNS-Filter gegen Werbung und Tracker
+  - Pi-hole 2:
+      icon: pi-hole
+      href: http://10.0.0.11:8053/admin
+      siteMonitor: http://gateway/claude/health
+      description: Zweiter DNS-Filter als Ausfallschutz
+  - Vaultwarden:
+      icon: vaultwarden
+      href: http://10.0.0.10:8222
+      siteMonitor: http://gateway/muell/health
+      description: Passwort-Tresor für die Familie
+  - WireGuard:
+      icon: wireguard
+      href: http://10.0.0.10:51821
+      siteMonitor: http://localhost:3000
+      description: VPN-Zugang von unterwegs
+  - OpenWrt:
+      icon: openwrt
+      href: http://10.0.0.1
+      siteMonitor: http://gateway/sprit/health
+      description: Router-Oberfläche und WLAN
+
+- Werkzeuge:
+  - CyberChef:
+      icon: cyberchef
+      href: http://10.0.0.10:8100
+      siteMonitor: http://gateway/claude/health
+      description: Daten kodieren, hashen und analysieren
+  - FreshRSS:
+      icon: freshrss
+      href: http://10.0.0.20:8180
+      # intentionally unreachable (".invalid" never resolves) -> demonstrates the offline state
+      siteMonitor: http://freshrss.invalid:8180
+      description: Nachrichten-Feeds an einem Ort
+
+- Server & Monitoring:
+  - Uptime Kuma:
+      icon: uptime-kuma
+      href: http://10.0.0.10:3001
+      siteMonitor: http://gateway/muell/health
+      description: Erreichbarkeit der Dienste überwachen
+  - Grafana:
+      icon: grafana
+      href: http://10.0.0.10:3030
+      siteMonitor: http://localhost:3000
+      description: Dashboards für Messwerte und Logs

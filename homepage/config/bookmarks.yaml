@@ -1,0 +1,158 @@
+# Example (mock) data for the demo – not a real setup.
+---
+# For configuration options and examples, please see:
+# https://gethomepage.dev/configs/bookmarks
+# Rendered as a "quick-start dock" (pill buttons) by custom.css.
+# Every link: icon + 2-letter abbr (unique per group, shown if the icon fails) + ONE short
+# description word (also hides the "www." host line). Link counts per group matter for the layout.
+
+- Videos:
+    - Vimeo:
+        - icon: si-vimeo
+          abbr: VI
+          href: https://vimeo.com/
+          description: Videos
+
+- Shopping:
+    - Geizhals:
+        - icon: mdi-tag-multiple-outline
+          abbr: GH
+          href: https://geizhals.de/
+          description: Preisvergleich
+    - eBay:
+        - icon: ebay.png
+          abbr: EB
+          href: https://www.ebay.de/
+          description: Auktionen
+    - Otto:
+        - icon: si-otto
+          abbr: OT
+          href: https://www.otto.de/
+          description: Versandhaus
+    - MediaMarkt:
+        - icon: si-mediamarkt
+          abbr: MM
+          href: https://www.mediamarkt.de/
+          description: Elektronik
+    - Kleinanzeigen:
+        - icon: kleinanzeigen.png
+          abbr: KA
+          href: https://www.kleinanzeigen.de/
+          description: Gebraucht
+    - Zalando:
+        - icon: si-zalando
+          abbr: ZA
+          href: https://www.zalando.de/
+          description: Mode
+
+- Shop-Check:
+    - Verbraucherzentrale:
+        - icon: mdi-shield-check-outline
+          abbr: VZ
+          href: https://www.verbraucherzentrale.de/
+          description: Verbraucherschutz
+    - Stiftung Warentest:
+        - icon: mdi-clipboard-check-outline
+          abbr: ST
+          href: https://www.test.de/
+          description: Tests
+
+- 3D-Modelle:
+    - Sketchfab:
+        - icon: si-sketchfab
+          abbr: SK
+          href: https://sketchfab.com/
+          description: Viewer
+    - GrabCAD:
+        - icon: mdi-cog-outline
+          abbr: GC
+          href: https://grabcad.com/
+          description: CAD
+    - Free3D:
+        - icon: mdi-cube-outline
+          abbr: F3
+          href: https://free3d.com/
+          description: Gratis
+    - TurboSquid:
+        - icon: si-turbosquid
+          abbr: TS
+          href: https://www.turbosquid.com/
+          description: Marktplatz
+    - CGTrader:
+        - icon: mdi-cube-scan
+          abbr: CG
+          href: https://www.cgtrader.com/
+          description: Modelle
+    - Pinshape:
+        - icon: mdi-shape-outline
+          abbr: PS
+          href: https://pinshape.com/
+          description: Druckbar
+
+# Gaming: sub-groups = columns (sub-column block in custom.css; titles in the KONFIG
+# block --gx-sub1..4). The ORDER matters: 2 links per column, the column title hangs on the
+# first link of each column.
+#   Shops (Steam, GOG) | Mehr Shops (Epic Games, itch.io)
+#   Kompatibilität (ProtonDB, PCGW) | Deals & Zeit (SteamDB, HLTB)
+- Gaming:
+    # --- Shops ---
+    - Steam:
+        - icon: steam.png
+          abbr: ST
+          href: https://store.steampowered.com/
+          description: Spiele-Shop
+    - GOG:
+        - icon: si-gogdotcom
+          abbr: GO
+          href: https://www.gog.com/
+          description: DRM-frei
+    # --- Mehr Shops ---
+    - Epic Games:
+        - icon: epic-games.png
+          abbr: EP
+          href: https://store.epicgames.com/
+          description: Gratisspiele
+    - itch.io:
+        - icon: si-itchdotio
+          abbr: IT
+          href: https://itch.io/
+          description: Indie
+    # --- Kompatibilität ---
+    - ProtonDB:
+        - icon: protondb.png
+          abbr: PD
+          href: https://www.protondb.com/
+          description: Linux-Check
+    - PCGW:
+        - icon: si-pcgamingwiki
+          abbr: PW
+          href: https://www.pcgamingwiki.com/
+          description: Fixes
+    # --- Deals & Zeit ---
+    - SteamDB:
+        - icon: si-steamdb
+          abbr: SD
+          href: https://steamdb.info/
+          description: Preisverlauf
+    - HLTB:
+        - icon: mdi-timer-outline
+          abbr: HB
+          href: https://howlongtobeat.com/
+          description: Spielzeit
+
+- Arbeit:
+    - GitHub:
+        - icon: github.png
+          abbr: GH
+          href: https://github.com/
+          description: Code
+    - Stack Overflow:
+        - icon: si-stackoverflow
+          abbr: SO
+          href: https://stackoverflow.com/
+          description: Fragen
+    - MDN:
+        - icon: si-mdnwebdocs
+          abbr: MD
+          href: https://developer.mozilla.org/
+          description: Webdoku

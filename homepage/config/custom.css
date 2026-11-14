@@ -1,0 +1,2681 @@
+/* ==============================================================
+   KONFIG – Texte, die zu den eigenen Links gehören
+   (Spaltentitel der Untergruppen; Rest der Datei ist link-neutral)
+   ============================================================== */
+/* KONFIG-START */
+:root {
+  --gx-sub1: "Shops";
+  --gx-sub2: "Mehr Shops";
+  --gx-sub3: "Kompatibilität";
+  --gx-sub4: "Deals & Zeit";
+}
+/* KONFIG-ENDE */
+
+/* ==============================================================
+   WARTUNG – Gruppen-Anker am Layout-Icon
+   Gruppen werden über ihr Layout-Icon verankert (settings.yaml, layout:
+   `icon: mdi-…`): Selektor `:has(> button [style*="/<icon>.svg"])`.
+   - Icon einer Gruppe geändert → ALLE Anker dieses Icons in dieser Datei
+     (Selektoren `[style*="/<icon>.svg"]`) mitpflegen.
+   - Jedes Icon darf nur einer Gruppe gehören (eindeutig) und muss ein mdi-/si-
+     Mask-Icon sein (Homepage setzt es als mask-image mit URL …/<icon>.svg).
+   - Die Untergruppen-Titel (--gx-sub1..4) hängen an der Position der Links in
+     der Gruppe (nth-child 1/3/5/7), nicht an Linknamen.
+   - Bezeichnungen wie „Variante A/B/H2“ in den Kommentaren stammen aus der
+     Mock-up-Phase (verglichene Gestaltungsentwürfe) und haben keine Funktion.
+   ============================================================== */
+
+/* ==============================================================
+   Galaxy-Design · "Command Deck"-Layout
+   Hintergrund-Galaxie + Maus-Parallax + Spotlight: custom.js
+   Bento-Raster der Gruppen richtet sich nach der Reihenfolge in
+   settings.yaml (1 Fotos, 2 Dateien, 3 Netzwerk, 4 Werkzeuge, 5 Server).
+   Kopfbereich richtet sich nach der Reihenfolge in widgets.yaml:
+   1 Uhrzeit, 2 Datum, 3 Suche; Wetter-Panel #gx-wx kommt aus custom.js.
+   ============================================================== */
+
+:root {
+  --gx-bg: #02030c;
+  --gx-panel: rgba(14, 16, 48, .42);
+  --gx-card: rgba(28, 32, 84, .38);
+  --gx-card-hover: rgba(44, 40, 110, .5);
+  --gx-line: rgba(150, 170, 255, .2);
+  --gx-line-hover: rgba(200, 160, 255, .6);
+  --gx-tx: #eef0ff;
+  --gx-mut: #9aa4e0;
+  --gx-a: #7aa2ff;
+  --gx-b: #c58bff;
+  --gx-c: #ff9be6;
+  --gx-max: 1320px;
+}
+
+/* ---------- Grundfläche & Galaxie-Canvas ---------- */
+html, body { background: var(--gx-bg) !important; color: var(--gx-tx); }
+#__next, #page_wrapper, #inner_wrapper { background: transparent !important; }
+#__next { position: relative; z-index: 2; }
+#gx-canvas { position: fixed; z-index: 0; pointer-events: none; }
+#gx-vignette {
+  position: fixed; inset: 0; z-index: 1; pointer-events: none;
+  background: radial-gradient(ellipse at 50% 35%, transparent 30%, rgba(2, 3, 12, .75) 100%);
+}
+
+/* gemeinsame Glas-Optik */
+#information-widgets .widget-container,
+#information-widgets .information-widget-search,
+.services-group,
+.bookmark-group {
+  background: var(--gx-panel) !important;
+  border: 1px solid var(--gx-line) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(1.4);
+  backdrop-filter: blur(16px) saturate(1.4);
+  box-shadow: 0 10px 50px rgba(40, 30, 140, .22), inset 0 1px 0 rgba(255, 255, 255, .07);
+}
+
+/* ==============================================================
+   KOPFBEREICH: Uhr + Datum  —  Wetter-Panel  —  Suche
+   ============================================================== */
+#information-widgets {
+  max-width: var(--gx-max);
+  width: calc(100% - 2.5rem);
+  margin: 2.2rem auto .6rem !important;
+  padding: 0 !important;
+  border: 0 !important;
+}
+#widgets-wrap {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas:
+    "time"
+    "date"
+    "deck"
+    "search";
+  column-gap: 18px;
+  row-gap: 0;
+  width: 100%;
+}
+#information-widgets-right { display: contents !important; }
+
+/* Uhrzeit (1. datetime) + Datum (2. datetime) teilen sich eine Glas-Fläche */
+#information-widgets-right > .information-widget-datetime:nth-child(1) {
+  grid-area: time;
+  border-bottom: 0 !important;
+  border-radius: 22px 22px 0 0;
+  box-shadow: none;
+  padding: 18px 26px 0;
+  justify-content: flex-end;
+}
+#information-widgets-right > .information-widget-datetime:nth-child(2) {
+  grid-area: date;
+  border-top: 0 !important;
+  border-radius: 0 0 22px 22px;
+  padding: 2px 26px 18px;
+  justify-content: flex-start;
+}
+#information-widgets-right > .information-widget-datetime > div { justify-content: flex-start !important; }
+#information-widgets-right > .information-widget-datetime:nth-child(1) span {
+  font-size: clamp(3rem, 6vw, 4.6rem) !important;
+  line-height: 1;
+  font-weight: 200;
+  letter-spacing: 4px;
+  background: linear-gradient(90deg, #fff, var(--gx-c), var(--gx-a), #fff);
+  background-size: 300% 100%;
+  -webkit-background-clip: text; background-clip: text;
+  color: transparent !important;
+  animation: gx-flow 8s linear infinite;
+  filter: drop-shadow(0 0 18px rgba(197, 139, 255, .35));
+}
+#information-widgets-right > .information-widget-datetime:nth-child(2) span {
+  color: var(--gx-mut) !important;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  font-size: 12px !important;
+}
+@keyframes gx-flow { to { background-position: 300% 0; } }
+
+/* Schwebe-Animation (Wetter-Symbol im Wetter-Panel) */
+@keyframes gx-float { 50% { transform: translateY(-4px); } }
+
+/* Suche: eigene Zeile, breite Glas-Pille */
+#information-widgets .information-widget-search {
+  grid-area: search;
+  border-radius: 999px;
+  padding: 6px 10px;
+  transition: border-color .3s, box-shadow .3s;
+}
+#information-widgets .information-widget-search:focus-within {
+  border-color: var(--gx-line-hover) !important;
+  box-shadow: 0 0 0 4px rgba(197, 139, 255, .12), 0 10px 50px rgba(120, 80, 255, .35);
+}
+.information-widget-search > div { height: 2.6rem !important; margin: 0 !important; }
+.information-widget-search input {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  font-size: 15px !important;
+  color: var(--gx-tx) !important;
+}
+.information-widget-search input::placeholder { color: var(--gx-mut) !important; }
+/* Google-Button: vertikal zentriert in der 2.6rem-Pille, rund */
+.information-widget-search button {
+  bottom: 1.3rem !important;
+  transform: translateY(50%) !important;
+  right: 6px !important;
+  border-radius: 999px !important;
+}
+
+/* ==============================================================
+   BENTO-RASTER der Gruppen
+   ============================================================== */
+#layout-groups,
+#bookmarks {
+  display: grid !important;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  max-width: var(--gx-max);
+  width: calc(100% - 2.5rem);
+  margin: 18px auto !important;
+  align-items: stretch !important;
+}
+.services-group { position: relative; transition: border-color .4s; }
+.services-group:hover { border-color: rgba(200, 160, 255, .38) !important; }
+.services-group::before {
+  content: ""; position: absolute; left: 22px; right: 22px; top: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gx-c), var(--gx-a), transparent);
+  opacity: .7;
+}
+@media (min-width: 1024px) {
+   /* Fotos */
+   /* Dateien & Dokumente (3 Kacheln) */
+   /* Netzwerk & Security */
+   /* Werkzeuge */
+  /* Server & Monitoring */
+  #layout-groups > .services-group:nth-child(1) .services-list { grid-template-columns: 1fr !important; }
+}
+
+/* ---------- Spotlight: Licht folgt der Maus (Koordinaten aus custom.js) ---------- */
+.services-group::after,
+.service-card::after {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+  opacity: 0; transition: opacity .5s ease;
+}
+.services-group::after {
+  background: radial-gradient(520px circle at var(--mx, 50%) var(--my, 50%), rgba(170, 130, 255, .10), transparent 60%);
+}
+.service-card::after {
+  padding: 1px;
+  background: radial-gradient(220px circle at var(--mx, 50%) var(--my, 50%), rgba(255, 190, 245, .85), rgba(122, 162, 255, .35) 40%, transparent 70%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+}
+.services-group:hover::after,
+.service-card:hover::after { opacity: 1; }
+
+/* Gruppen-Überschriften */
+.service-group-name,
+.bookmark-group-name {
+  text-transform: uppercase;
+  color: var(--gx-mut) !important;
+}
+.service-group-icon > div {
+  background: var(--gx-b) !important;
+  filter: drop-shadow(0 0 4px var(--gx-b));
+}
+
+/* ---------- Dienst-Karten ---------- */
+.service-card {
+  background: var(--gx-card) !important;
+  overflow: visible !important;
+}
+.service-card:hover {
+  transform: translateY(-3px);
+  background: var(--gx-card-hover) !important;
+  box-shadow: 0 14px 34px -12px rgba(150, 90, 255, .5), inset 0 1px 0 rgba(255, 255, 255, .1) !important;
+}
+.service-title, .service-title-text { align-items: center; }
+.service-name { color: var(--gx-tx) !important; }
+.service-description { color: var(--gx-mut) !important; }
+
+/* ---------- Icons: "Eclipse" – ruhig, edel ---------- */
+.service-icon {
+  position: relative;
+
+align-self: center;
+  border-radius: 50%;
+}
+.service-icon img {
+
+  transition: transform .6s cubic-bezier(.2, .8, .2, 1), filter .6s ease;
+}
+.service-icon::before {
+  content: ""; position: absolute; inset: -3px; border-radius: 50%;
+  background: conic-gradient(from 0deg, transparent 0 62%, rgba(122, 162, 255, .0) 62%, rgba(122, 162, 255, .7) 82%, rgba(255, 175, 240, .95) 92%, transparent 93%);
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 1.5px), #000 calc(100% - 1px));
+  mask: radial-gradient(farthest-side, transparent calc(100% - 1.5px), #000 calc(100% - 1px));
+  opacity: .55;
+  animation: gx-spin 28s linear infinite;
+  transition: opacity .6s ease;
+  pointer-events: none;
+}
+.service-icon::after {
+  content: ""; position: absolute; inset: 0; border-radius: 50%;
+  box-shadow: 0 0 18px 2px rgba(170, 130, 255, .45);
+  opacity: .15;
+  animation: gx-breathe 7s ease-in-out infinite;
+  pointer-events: none;
+}
+.service:nth-child(2n) .service-icon::before { animation-delay: -9s; }
+.service:nth-child(3n) .service-icon::before { animation-delay: -17s; animation-duration: 34s; }
+.service:nth-child(2n) .service-icon::after { animation-delay: -2.5s; }
+.service:nth-child(3n) .service-icon::after { animation-delay: -4.8s; }
+
+.service-card:hover .service-icon::before {
+  opacity: 1;
+  background: conic-gradient(from 0deg, rgba(122, 162, 255, .35), rgba(255, 175, 240, .95), rgba(197, 139, 255, .6), rgba(122, 162, 255, .35));
+}
+.service-card:hover .service-icon::after { animation: none; opacity: .8; transition: opacity .6s; }
+.service-card:hover .service-icon img { transform: scale(1.08); filter: drop-shadow(0 0 8px rgba(255, 175, 240, .7)); }
+
+@keyframes gx-spin { to { transform: rotate(360deg); } }
+@keyframes gx-breathe { 50% { opacity: .55; } }
+
+.service-tags .rounded-full { animation: gx-blink 3s ease-in-out infinite; }
+@keyframes gx-blink { 50% { opacity: .45; } }
+
+/* ---------- Bookmarks ---------- */
+#bookmarks > .bookmark-group { grid-column: span 6; padding: 14px 14px 6px !important; }
+@media (min-width: 1024px) { #bookmarks > .bookmark-group { grid-column: span 3; } }
+.bookmark {
+  background: var(--gx-card) !important;
+
+  transition: transform .3s, border-color .3s;
+}
+.bookmark:hover { transform: translateY(-3px); border-color: var(--gx-line-hover); }
+.bookmark-icon { color: var(--gx-tx) !important; }
+.bookmark-name { color: var(--gx-tx) !important; }
+.bookmark-description { color: var(--gx-mut) !important; }
+
+#footer, #version, #revalidate { opacity: .55; }
+
+/* Animationen laufen bewusst auch, wenn das System Animationen abschaltet (prefers-reduced-motion). */
+
+/* ==============================================================
+   WETTER-DECK (#gx-wx aus custom.js, Daten: Open-Meteo)
+   volle Breite unter Uhr/Datum + Wetter, über der Suche
+   ============================================================== */
+#gx-wx {
+  grid-area: deck;
+  position: relative;
+  overflow: hidden;
+  padding: 16px 22px 18px;
+  background: var(--gx-panel);
+  border: 1px solid var(--gx-line);
+  border-radius: 22px;
+  -webkit-backdrop-filter: blur(16px) saturate(1.4);
+  backdrop-filter: blur(16px) saturate(1.4);
+  box-shadow: 0 10px 50px rgba(40, 30, 140, .22), inset 0 1px 0 rgba(255, 255, 255, .07);
+  animation: gx-wx-in .9s cubic-bezier(.2, .8, .2, 1) both;
+  transition: border-color .4s;
+}
+#gx-wx:hover { border-color: rgba(200, 160, 255, .38); }
+#gx-wx::before {
+  content: ""; position: absolute; left: 22px; right: 22px; top: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gx-c), var(--gx-a), transparent);
+  opacity: .7;
+}
+/* langsam wandernder Polarlicht-Schimmer */
+#gx-wx::after {
+  content: ""; position: absolute; top: -60%; left: -30%; width: 60%; height: 220%;
+  background: radial-gradient(closest-side, rgba(197, 139, 255, .13), rgba(122, 162, 255, .05) 55%, transparent);
+  animation: gx-wx-aurora 22s ease-in-out infinite alternate;
+  pointer-events: none; z-index: 0;
+}
+@keyframes gx-wx-aurora { to { transform: translateX(165%) rotate(14deg); } }
+@keyframes gx-wx-in { from { opacity: 0; transform: translateY(10px); } }
+
+.gx-wx-head, .gx-wx-grid { position: relative; z-index: 1; }
+.gx-wx-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.gx-wx-title {
+  display: flex; align-items: center; gap: 9px;
+  font-size: 12px; font-weight: 500; letter-spacing: 3px; text-transform: uppercase; color: var(--gx-mut);
+}
+.gx-wx-title i {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--gx-c); box-shadow: 0 0 8px var(--gx-c);
+  animation: gx-blink 3s ease-in-out infinite;
+}
+
+.gx-wx-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.75fr) minmax(0, 1fr); }
+.gx-wx-col { min-width: 0; display: flex; flex-direction: column; padding: 0 22px; }
+.gx-wx-col:first-child { padding-left: 0; }
+.gx-wx-col:last-child { padding-right: 0; }
+.gx-wx-col + .gx-wx-col { border-left: 1px solid rgba(150, 170, 255, .12); }
+.gx-wx-sub { font-size: 11px; letter-spacing: 2.5px; text-transform: uppercase; color: var(--gx-mut); margin-bottom: 10px; }
+
+/* ---------- Jetzt ---------- */
+.gx-wx-hero { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+.gx-ico-xl {
+  width: 52px; height: 52px; flex: none; color: #fff;
+  filter: drop-shadow(0 0 8px rgba(255, 175, 240, .55)) drop-shadow(0 0 18px rgba(122, 162, 255, .4));
+  animation: gx-float 6s ease-in-out infinite;
+}
+.gx-wx-temp {
+  font-size: 2.5rem; font-weight: 200; line-height: 1; letter-spacing: 1px;
+  background: linear-gradient(90deg, #fff, var(--gx-c), var(--gx-a), #fff);
+  background-size: 300% 100%;
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  animation: gx-flow 8s linear infinite;
+}
+.gx-wx-heroinfo { min-width: 0; }
+.gx-wx-cond { font-size: 15px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.gx-wx-feel { display: flex; flex-wrap: wrap; gap: 2px 9px; margin-top: 3px; font-size: 12px; color: var(--gx-mut); }
+.gx-wx-feel b { color: var(--gx-tx); font-weight: 500; }
+.gx-hi { color: #ffb3ea; }
+.gx-lo { color: #9db8ff; }
+
+.gx-wx-tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.gx-wx-tile {
+  display: flex; align-items: center; gap: 10px; min-width: 0;
+  padding: 7px 10px; border-radius: 14px;
+  background: var(--gx-card); border: 1px solid rgba(150, 170, 255, .12);
+  transition: transform .35s cubic-bezier(.2, .8, .2, 1), border-color .35s, background .35s;
+}
+.gx-wx-tile:hover { transform: translateY(-2px); border-color: var(--gx-line-hover); background: var(--gx-card-hover); }
+@keyframes gx-wx-pop { from { opacity: 0; transform: translateY(8px) scale(.97); } }
+.gx-wx-ti {
+  width: 32px; height: 32px; flex: none; border-radius: 50%;
+  display: grid; place-items: center;
+  background: radial-gradient(circle at 35% 30%, rgba(255, 255, 255, .14), rgba(90, 80, 255, .14) 70%);
+  box-shadow: inset 0 0 0 1px rgba(150, 170, 255, .14);
+}
+.gx-wx-ti svg { width: 19px; height: 19px; overflow: visible; }
+.gx-t-hum .gx-wx-ti { color: #7fdcff; }
+.gx-t-wind .gx-wx-ti { color: #9db8ff; }
+.gx-t-rain .gx-wx-ti { color: #6fb0ff; }
+.gx-t-uv .gx-wx-ti { color: #ffd59a; }
+.gx-t-press .gx-wx-ti { color: #c58bff; }
+.gx-t-cloud .gx-wx-ti { color: #dfe4ff; }
+.gx-wx-tv { display: flex; flex-direction: column; min-width: 0; line-height: 1.2; }
+.gx-wx-tv b { font-weight: 500; white-space: nowrap; }
+.gx-wx-tv small { margin-left: 3px; font-size: 11px; font-weight: 400; color: var(--gx-mut); }
+.gx-wx-tv em { font-style: normal; font-size: 10.5px; color: var(--gx-mut); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.gx-t-wobble { transform-box: fill-box; transform-origin: center; animation: gx-wx-wobble 3.2s ease-in-out infinite; }
+@keyframes gx-wx-wobble { 0%, 100% { transform: rotate(-7deg); } 50% { transform: rotate(7deg); } }
+.gx-t-wave { animation: gx-wx-wave 2.6s ease-in-out infinite; }
+@keyframes gx-wx-wave { 50% { transform: translateY(1.2px); } }
+.gx-t-needle { transform-origin: 12px 13.8px; animation: gx-wx-needle 4s ease-in-out infinite; }
+@keyframes gx-wx-needle { 0%, 100% { transform: rotate(-4deg); } 50% { transform: rotate(4deg); } }
+
+/* Sonnenbogen */
+.gx-wx-sun { margin-top: 10px; height: 80px; }
+.gx-wx-sun svg { overflow: visible; }
+.gx-sun-hz { stroke: rgba(150, 170, 255, .25); stroke-dasharray: 2 4; }
+.gx-sun-track { fill: none; stroke: rgba(255, 213, 154, .3); stroke-width: 1.2; stroke-dasharray: 3 5; }
+.gx-sun-done { fill: none; stroke-width: 2.2; stroke-linecap: round; }
+.gx-sun-dot { fill: #ffe6bd; filter: drop-shadow(0 0 6px #ffc06b) drop-shadow(0 0 14px rgba(255, 155, 230, .7)); }
+.gx-sun-halo { fill: none; stroke: #ffd59a; stroke-width: 1.2; }
+.gx-sun-night { fill: #9db8ff; filter: drop-shadow(0 0 6px #7aa2ff); animation: gx-breathe 4s ease-in-out infinite; }
+.gx-wx-sun text { font-size: 11px; fill: var(--gx-mut); }
+.gx-wx-sun .gx-sun-r { text-anchor: end; }
+.gx-wx-sun .gx-sun-info { text-anchor: middle; fill: #dfe4ff; }
+
+/* ---------- 24-h-Verlauf ---------- */
+.gx-wx-chart { position: relative; flex: 1; min-height: 240px; }
+.gx-wx-svg { position: absolute; left: 0; top: 0; overflow: visible; }
+.gx-wx-base { stroke: rgba(150, 170, 255, .18); }
+.gx-wx-tick { stroke: rgba(150, 170, 255, .12); stroke-dasharray: 2 4; }
+.gx-wx-line { fill: none; stroke-width: 2.4; stroke-linecap: round; }
+.gx-wx-glowline { fill: none; stroke-width: 7; opacity: .5; }
+.gx-wx-t { font-size: 12px; font-weight: 500; fill: var(--gx-tx); text-anchor: middle; }
+.gx-wx-h { font-size: 10.5px; letter-spacing: .5px; fill: var(--gx-mut); text-anchor: middle; }
+.gx-wx-h.now { fill: var(--gx-c); font-weight: 600; }
+.gx-wx-dot { fill: #fff; filter: drop-shadow(0 0 6px #ff9be6); }
+.gx-wx-ring { fill: none; stroke: #ff9be6; stroke-width: 1.4; }
+.gx-wx-comet { fill: #fff; filter: drop-shadow(0 0 4px #fff) drop-shadow(0 0 10px #c58bff); }
+.gx-ico-chart { color: #dfe4ff; }
+.gx-wx-intro .gx-wx-area { animation: gx-wx-fade 1.6s .6s both; }
+.gx-wx-intro .gx-wx-t,
+.gx-wx-intro .gx-ico-chart,
+.gx-wx-intro .gx-wx-p,
+.gx-wx-intro .gx-wx-comet { animation: gx-wx-fade .8s 1.4s both; }
+@keyframes gx-wx-fade { from { opacity: 0; } }
+@keyframes gx-wx-grow { from { transform: scaleY(0); } }
+
+/* ---------- 7 Tage ---------- */
+.gx-wx-days ul { flex: 1; display: flex; flex-direction: column; justify-content: space-between; gap: 2px; }
+.gx-wx-days li {
+  display: grid; grid-template-columns: 50px 22px 42px 28px minmax(30px, 1fr) 28px;
+  align-items: center; gap: 8px;
+  padding: 5px 8px; margin: 0 -8px; border-radius: 12px; font-size: 13px;
+}
+.gx-wx-days li:hover { background: rgba(120, 110, 255, .13); }
+@keyframes gx-wx-row { from { opacity: 0; transform: translateX(12px); } }
+.gx-d-name { font-weight: 500; }
+.gx-wx-days li:first-child .gx-d-name { color: var(--gx-c); }
+.gx-ico-sm { width: 22px; height: 22px; color: #dfe4ff; }
+.gx-d-rain { display: flex; align-items: center; gap: 3px; font-size: 11px; color: #8fd6ff; }
+.gx-d-rain svg { width: 9px; height: 9px; flex: none; }
+.gx-d-rain.dim { opacity: .4; }
+.gx-d-lo { font-size: 12.5px; color: #9db8ff; text-align: right; }
+.gx-d-hi { font-weight: 500; }
+.gx-d-bar { position: relative; height: 6px; border-radius: 99px; background: rgba(150, 170, 255, .12); }
+.gx-d-bar i {
+  position: absolute; top: 0; bottom: 0; border-radius: 99px;
+  background: linear-gradient(90deg, #7aa2ff, #c58bff, #ff9be6, #7aa2ff);
+  background-size: 300% 100%;
+  animation: gx-flow 7s linear infinite;
+  box-shadow: 0 0 10px rgba(197, 139, 255, .45);
+}
+.gx-d-bar b {
+  position: absolute; top: 50%; width: 10px; height: 10px; margin: -5px 0 0 -5px; border-radius: 50%;
+  background: #fff; box-shadow: 0 0 0 2px rgba(2, 3, 12, .85), 0 0 10px #ff9be6;
+}
+
+/* ---------- animierte Wetter-Symbole ---------- */
+#gx-wx .gx-ico { overflow: visible; }
+#gx-wx .gx-ico-clear .gx-i-sun, #gx-wx .gx-ico-partly .gx-i-sun, .gx-t-uv .gx-i-sun { color: #ffd59a; }
+#gx-wx .gx-ico-night .gx-i-moon { color: #c9d4ff; }
+#gx-wx .gx-i-rays { transform-box: fill-box; transform-origin: center; animation: gx-spin 26s linear infinite; }
+#gx-wx .gx-i-moon { animation: gx-breathe 5s ease-in-out infinite; }
+#gx-wx .gx-i-drift { animation: gx-wx-drift 5s ease-in-out infinite; }
+@keyframes gx-wx-drift { 50% { transform: translateX(.9px); } }
+#gx-wx .gx-i-drop { color: #7fdcff; animation: gx-wx-drop 1.1s linear infinite; }
+#gx-wx .gx-i-drop:nth-of-type(2) { animation-delay: -.37s; }
+#gx-wx .gx-i-drop:nth-of-type(3) { animation-delay: -.74s; }
+@keyframes gx-wx-drop { 0% { transform: translateY(-2px); opacity: 0; } 25% { opacity: 1; } 100% { transform: translateY(3px); opacity: 0; } }
+#gx-wx .gx-i-flake { animation: gx-wx-snow 2.4s linear infinite; }
+#gx-wx .gx-i-flake:nth-of-type(2) { animation-delay: -.8s; }
+#gx-wx .gx-i-flake:nth-of-type(3) { animation-delay: -1.6s; }
+@keyframes gx-wx-snow { 0% { transform: translate(0, -2px); opacity: 0; } 30% { opacity: 1; } 100% { transform: translate(1px, 3px); opacity: 0; } }
+#gx-wx .gx-i-bolt { stroke: #ffe08a; animation: gx-wx-bolt 3.2s linear infinite; }
+@keyframes gx-wx-bolt { 0%, 84%, 100% { opacity: .35; } 86%, 91% { opacity: 1; } 88% { opacity: .4; } }
+#gx-wx .gx-i-fog { animation: gx-wx-fog 3.6s ease-in-out infinite alternate; }
+#gx-wx .gx-i-fog2 { animation-direction: alternate-reverse; }
+@keyframes gx-wx-fog { from { transform: translateX(-1.4px); } to { transform: translateX(1.4px); } }
+
+/* ---------- schmalere Fenster ---------- */
+@media (max-width: 1180px) {
+  .gx-wx-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .gx-wx-hours {
+    grid-column: 1 / -1; order: 3;
+    margin-top: 16px; padding: 16px 0 0 !important;
+    border-left: 0 !important; border-top: 1px solid rgba(150, 170, 255, .12);
+  }
+}
+@media (max-width: 767px) {
+  #gx-wx { padding: 14px 16px 16px; }
+  .gx-wx-grid { grid-template-columns: minmax(0, 1fr); }
+  .gx-wx-col { padding: 0 !important; border-left: 0 !important; }
+  .gx-wx-col + .gx-wx-col { margin-top: 16px; padding-top: 16px !important; border-top: 1px solid rgba(150, 170, 255, .12); }
+}
+
+/* ==============================================================
+   KOMMANDOPULT (Variante B) – alle Gruppen in EINEM Glas-Panel
+   #layout-groups = das Panel; Gruppen sind Abschnitte mit
+   Trennlinien. Platzierung per :nth-child in settings.yaml-Reihenfolge:
+   1 Fotos, 2 Dateien, 3 Netzwerk, 4 Werkzeuge, 5 Server,
+   6 Videos, 7 Shopping (Lesezeichen über layout-Einträge).
+   Reihe 1: Fotos | Dateien | Server   Reihe 2: Netzwerk | Werkzeuge
+   Reihe 3: Videos | Shopping (Pills in natürlicher Größe = Schnellstart-Dock)
+   Maus-Spotlight (.service-card::after, --mx/--my aus custom.js) bleibt.
+   ============================================================== */
+#layout-groups {
+  gap: 0 !important;
+  position: relative;
+  -webkit-backdrop-filter: blur(16px) saturate(1.4);
+}
+#layout-groups::before {                       /* Lichtkante oben */
+  content: ""; position: absolute; left: 22px; right: 22px; top: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gx-c), var(--gx-a), transparent);
+  opacity: .7; pointer-events: none;
+}
+
+/* Gruppen = Abschnitte ohne eigenes Glas */
+#layout-groups > .services-group,
+#layout-groups > .bookmark-group {
+  grid-column: 1 / -1 !important;
+  position: relative;
+  overflow: visible !important;
+  border: 0 !important; border-radius: 0 !important;
+  box-shadow: none !important;
+  -webkit-backdrop-filter: none; backdrop-filter: none;
+  background: none !important;
+  counter-reset: gx-n;
+}
+#layout-groups > .services-group::before,
+#layout-groups > .bookmark-group::before { display: none !important; }
+
+/* Trennlinien (als Hintergrund-Ebenen, damit ::after fürs Spotlight frei bleibt) */
+:root {
+  --gx-hline: linear-gradient(90deg, transparent, var(--gx-line) 6%, var(--gx-line) 94%, transparent) 22px 0 / calc(100% - 44px) 1px no-repeat;
+  --gx-vline: linear-gradient(180deg, transparent, var(--gx-line) 12%, var(--gx-line) 88%, transparent) 0 20px / 1px calc(100% - 40px) no-repeat;
+}
+#layout-groups > :not(:first-child) { background: var(--gx-hline) !important; }   /* mobil: gestapelt */
+
+@media (min-width: 1024px) {
+  #layout-groups > :nth-child(1) { grid-row: 1; }    /* Fotos */
+/* Dateien */
+/* Server */
+/* Netzwerk */
+/* Werkzeuge */
+/* Videos */
+/* Shopping */
+  #layout-groups > :nth-child(2), #layout-groups > :nth-child(5) { background: var(--gx-vline) !important; }
+  #layout-groups > :nth-child(3), #layout-groups > :nth-child(6) { background: var(--gx-hline) !important; }
+  #layout-groups > :nth-child(4), #layout-groups > :nth-child(7) { background: var(--gx-vline), var(--gx-hline) !important; }
+}
+
+/* Kopfzeile + Zähler rechts ("3 Dienste"; beim Hover macht er dem Einklapp-Pfeil Platz) */
+.services-list > li.service, .bookmark-list > li.bookmark { counter-increment: gx-n; }
+.services-list::after, .bookmark-group .bookmark-list::after {
+  position: absolute; top: 27px; right: 24px;
+  font-size: 11px; letter-spacing: 1px; text-transform: uppercase;
+  color: var(--gx-mut); opacity: .6; pointer-events: none;
+  transition: opacity .3s;
+}
+#layout-groups > *:hover .services-list::after,
+#layout-groups > *:hover .bookmark-list::after { opacity: 0; }
+
+/* ---------- Dienste als volle Pills, untereinander ---------- */
+#layout-groups .services-list {
+  display: flex !important; flex-direction: column;
+  grid-template-columns: none !important;
+}
+#layout-groups .service-title { align-items: center; position: relative; }
+#layout-groups .service-title-text { min-width: 0; }   /* Platz für Punkt + Pfeil */
+#layout-groups .service-name {
+ min-width: 0;
+
+}
+#layout-groups .service-description {
+ white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+/* Öffnen-Pfeil */
+#layout-groups .service-title-text::after {
+  content: ""; position: absolute; top: 50%; transform: translateY(-50%);
+ border-radius: 50%;
+}
+#layout-groups .service-card:hover .service-title-text::after {
+  border-color: var(--gx-line-hover); background-color: rgba(197, 139, 255, .15);
+}
+/* Status-Punkt links vom Pfeil */
+
+/* ---------- Lesezeichen: Pills in natürlicher Größe (wie Schnellstart-Dock) ---------- */
+.bookmark-group-icon { width: 22px !important; height: 22px !important; margin-right: 10px !important; }
+.bookmark-group-icon > div {
+  background: var(--gx-b) !important;
+  filter: drop-shadow(0 0 4px var(--gx-b));
+}
+.bookmark-group .bookmark-list {
+  flex-direction: row !important; flex-wrap: wrap;
+}
+.bookmark-group .bookmark {
+  background: none !important; border: 0 !important; border-radius: 999px !important;
+  margin: 0 !important; overflow: visible !important; transform: none !important;
+}
+.bookmark-group .bookmark > a {
+  margin: 0 !important;
+  background: var(--gx-card) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .06) !important;
+}
+.bookmark-group .bookmark > a:hover {
+  transform: translateY(-2px);
+  background: var(--gx-card-hover) !important;
+  border-color: var(--gx-line-hover);
+  box-shadow: 0 0 26px rgba(197, 139, 255, .32), inset 0 1px 0 rgba(255, 255, 255, .1) !important;
+}
+.bookmark-group .bookmark > a > div { align-items: center; }
+.bookmark-group .bookmark-icon {
+  position: relative;
+
+  border-radius: 50% !important;
+  box-shadow: inset 0 0 0 1px rgba(150, 170, 255, .14);
+}
+.bookmark-group .bookmark-icon img {
+
+  transition: transform .6s cubic-bezier(.2, .8, .2, 1), filter .6s ease;
+}
+.bookmark-group .bookmark-icon::before {
+  content: ""; position: absolute; inset: -4px; border-radius: 50%;
+  background: conic-gradient(from 0deg, transparent 0 62%, rgba(122, 162, 255, .7) 82%, rgba(255, 175, 240, .95) 92%, transparent 93%);
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 1.5px), #000 calc(100% - 1px));
+  mask: radial-gradient(farthest-side, transparent calc(100% - 1.5px), #000 calc(100% - 1px));
+  opacity: .6;
+  animation: gx-spin 22s linear infinite;
+  pointer-events: none;
+}
+.bookmark-group + .bookmark-group .bookmark-icon::before { animation-delay: -11s; }
+.bookmark-group .bookmark > a:hover .bookmark-icon::before {
+  opacity: 1;
+  background: conic-gradient(from 0deg, rgba(122, 162, 255, .35), rgba(255, 175, 240, .95), rgba(197, 139, 255, .6), rgba(122, 162, 255, .35));
+}
+.bookmark-group .bookmark > a:hover .bookmark-icon img { transform: scale(1.1); filter: drop-shadow(0 0 6px rgba(255, 175, 240, .7)); }
+.bookmark-group .bookmark-text {
+  flex-direction: column; align-items: flex-start !important; justify-content: center !important;
+overflow: visible !important; line-height: 1.25;
+}
+.bookmark-group .bookmark-name { padding: 0 !important; font-size: 14px !important; font-weight: 600; }
+.bookmark-group .bookmark-description { padding: 0 !important; }
+
+/* Gruppen-Spotlight weicher, damit im gemeinsamen Panel keine Kanten sichtbar werden */
+#layout-groups > .services-group::after {
+  background: radial-gradient(340px circle at var(--mx, 50%) var(--my, 50%), rgba(170, 130, 255, .09), transparent 70%) !important;
+}
+
+/* ==============================================================
+   KONTINGENT-DECK (#gx-cl) – KI-Kontingent rechts neben der Uhr
+   (Logik: Block "KI-Kontingent-Deck" in custom.js)
+   ============================================================== */
+#widgets-wrap { position: relative; }
+#gx-cl {
+  --cl-line: rgba(150,170,255,.14); --cl-mut: #8f97c9;
+  position: absolute; top: 14px; right: 14px; z-index: 5;
+  width: min(1010px, calc(100% - 320px));
+  display: flex; align-items: center; gap: 20px;
+  padding: 12px 18px; border-radius: 18px;
+  background: rgba(9,11,34,.94); border: 1px solid var(--cl-line);
+  box-shadow: 0 0 0 1px rgba(255,255,255,.02) inset, 0 14px 40px -18px rgba(80,60,200,.55);
+  color: #e7ebff; font-size: 14px; line-height: 1.35; overflow: hidden;
+  /* bewusst ohne Einblend-Animation: Panel steht sofort da */
+}
+#gx-cl::after {                                   /* Lichtschimmer */
+  content: ""; position: absolute; inset: 0; pointer-events: none; border-radius: inherit;
+  background: linear-gradient(110deg, transparent 35%, rgba(255,255,255,.045) 50%, transparent 65%);
+  background-size: 250% 100%; animation: gxClShine 9s linear infinite;
+}
+#gx-cl.crit {
+  border-color: rgba(255,77,109,.55);
+  animation: gxClPulse 2.2s ease-in-out infinite;
+}
+#gx-cl.crit::before {
+  content: ""; position: absolute; inset: 0; pointer-events: none; border-radius: inherit;
+  background: radial-gradient(ellipse 40% 90% at 0% 50%, rgba(255,77,109,.18), transparent 70%);
+}
+
+.gx-cl-brand { flex: none; width: 88px; display: flex; flex-direction: column; align-items: center; gap: 5px; position: relative; }
+.gx-cl-logo { width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center;
+  background: radial-gradient(circle, rgba(154,164,224,.18), transparent 70%); box-shadow: 0 0 18px rgba(154,164,224,.4); }
+.gx-cl-logo svg { width: 20px; height: 20px; }
+.gx-cl-title { font-weight: 600; font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase; white-space: nowrap; }
+.gx-cl-state { display: flex; align-items: center; gap: 5px; font-size: 10.5px; color: var(--cl-mut); }
+.gx-cl-state i { width: 7px; height: 7px; border-radius: 50%; background: #4dffb5; box-shadow: 0 0 10px #4dffb5; animation: gxClBlink 2.4s ease-in-out infinite; }
+.gx-cl-stale i { background: #ffb547; box-shadow: 0 0 10px #ffb547; }
+.gx-cl-sep { width: 1px; align-self: stretch; background: var(--cl-line); flex: none; position: relative; }
+.gx-cl-msg { color: var(--cl-mut); font-size: 13px; }
+
+.gx-cl-half { flex: 1; min-width: 0; display: flex; gap: 16px; align-items: center; position: relative; }
+.gx-cl-ring { position: relative; flex: none; }
+.gx-cl-svg { overflow: visible; }
+.gx-cl-orbit { fill: none; stroke: rgba(150,170,255,.18); stroke-dasharray: 2 6; transform-origin: center; transform-box: fill-box; animation: gxClSpin 30s linear infinite; }
+.gx-cl-warn { fill: none; stroke: #ff4d6d; stroke-width: 2; stroke-opacity: .4; transform-origin: center; transform-box: fill-box; animation: gxClRing 1.8s ease-out infinite; }
+.gx-cl-warn2 { stroke-width: 1.5; stroke-opacity: .2; animation-delay: .6s; }
+.gx-cl-sat { fill: #fff; filter: drop-shadow(0 0 6px var(--g)); animation: gxClSat 2.6s ease-in-out infinite; transform-origin: center; transform-box: fill-box; }
+.gx-cl-pace { display: none; } /* Zeit-Strich im Ring ausgeblendet */
+.gx-cl-free { position: absolute; inset: 0; display: grid; place-items: center; }
+.gx-cl-free b, .gx-cl-reset b {
+  background: linear-gradient(90deg, var(--c1), var(--c2)); -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.gx-cl-free b { font-size: 20px; font-weight: 300; letter-spacing: -.02em; }
+.gx-cl-free em { font-style: normal; font-size: 9px; color: var(--cl-mut); -webkit-text-fill-color: var(--cl-mut); margin-left: 1px; }
+
+.gx-cl-info { flex: 1; min-width: 0; }
+.gx-cl-row { display: flex; align-items: baseline; gap: 8px; }
+.gx-cl-lbl { font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: var(--cl-mut); white-space: nowrap; }
+.gx-cl-chip { padding: 1px 9px; border-radius: 99px; font-size: 11px; line-height: 1.5; white-space: nowrap;
+  border: 1px solid var(--cl-line); background: rgba(28,32,84,.38); }
+.gx-cl-chip.ok { color: #4dffb5; border-color: rgba(77,255,181,.27); }
+.gx-cl-chip.w  { color: #ffb547; border-color: rgba(255,181,71,.35); }
+.gx-cl-chip.h  { color: #ff6b84; border-color: rgba(255,77,109,.5); background: rgba(255,77,109,.12); }
+.gx-cl-alert { animation: gxClBlink 1.4s ease-in-out infinite; }
+.gx-cl-reset { margin-left: auto; font-size: 12.5px; color: var(--cl-mut); white-space: nowrap; }
+.gx-cl-reset b { font-size: 15px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.gx-cl-bar { position: relative; height: 9px; margin-top: 12px; border-radius: 99px; background: rgba(255,255,255,.06); border: 1px solid rgba(150,170,255,.2); }
+.gx-cl-bar i { position: absolute; inset: 0 auto 0 0; border-radius: inherit; overflow: hidden;
+  background: linear-gradient(90deg, var(--c1), var(--c2)); box-shadow: 0 0 14px var(--c1); transition: width 1s ease; }
+.gx-cl-bar i::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, transparent, rgba(255,255,255,.55), transparent);
+  background-size: 50% 100%; background-repeat: no-repeat; animation: gxClFlow 2.8s ease-in-out infinite; }
+.gx-cl-bar u { position: absolute; top: -5px; bottom: -5px; width: 2px; margin-left: -1px; background: #fff; box-shadow: 0 0 8px #fff; border-radius: 2px; }
+.gx-cl-foot { justify-content: space-between; font-size: 10.5px; color: var(--cl-mut); margin-top: 5px; }
+.gx-cl-under { color: #4dffb5; } .gx-cl-over { color: #ff8a9c; }
+.gx-cl-empty { color: var(--cl-mut); gap: 10px; }
+
+@keyframes gxClShine { from { background-position: 150% 0; } to { background-position: -150% 0; } }
+@keyframes gxClSpin { to { transform: rotate(360deg); } }
+@keyframes gxClBlink { 50% { opacity: .35; } }
+@keyframes gxClSat { 50% { transform: scale(1.35); } }
+@keyframes gxClFlow { from { background-position: -100% 0; } to { background-position: 250% 0; } }
+@keyframes gxClRing { from { transform: scale(.92); opacity: .9; } to { transform: scale(1.12); opacity: 0; } }
+@keyframes gxClPulse {
+  0%, 100% { box-shadow: 0 0 0 1px rgba(255,77,109,.15) inset, 0 0 26px -8px rgba(255,77,109,.45); }
+  50%      { box-shadow: 0 0 0 1px rgba(255,77,109,.3) inset, 0 0 46px -4px rgba(255,77,109,.7); }
+}
+
+/* schmale Fenster: Panel unter die Uhr statt daneben */
+@media (max-width: 1180px) {
+  #gx-cl { width: auto; }
+  .gx-cl-brand { width: auto; }
+}
+
+/* ==============================================================
+   SUCH-DROPDOWN (Variante B · Verschmolzene Kapsel)
+   Google-Vorschläge im Galaxy-Look: Pille klappt zu einem Panel auf.
+   Hintergründe bewusst deckend (rgb), sonst scheinen die Karten durch.
+   ============================================================== */
+#information-widgets { position: relative !important; z-index: 30 !important; } /* < QuickLaunch (z-40) */
+.information-widget-search:has([role=listbox]) {
+  border-radius: 26px 26px 0 0 !important;
+}
+.information-widget-search [role=listbox] {
+  position: absolute !important;
+  left: -11px; right: -11px; top: calc(100% + 7px);
+margin: 0 !important;
+  padding: 4px 10px 12px !important;
+  border-radius: 0 0 26px 26px !important;
+  background: linear-gradient(180deg, rgb(20, 20, 62), rgb(10, 12, 38)) !important;
+  border: 1px solid var(--gx-line-hover) !important; border-top: 0 !important;
+  box-shadow: 0 0 0 4px rgba(197, 139, 255, .12), 0 24px 60px rgba(60, 40, 200, .4) !important;
+  transform-origin: top center;
+  animation: gx-dd-in .22s ease-out;
+}
+@keyframes gx-dd-in { from { opacity: 0; transform: translateY(-6px) scaleY(.96); } }
+.information-widget-search [role=listbox]::before {
+  content: ""; display: block; height: 1px; margin: 0 8px 6px;
+  background: linear-gradient(90deg, transparent, var(--gx-line-hover), transparent);
+}
+.information-widget-search [role=listbox] > div { background: transparent !important; padding: 0 !important; color: var(--gx-tx) !important; }
+.information-widget-search [role=listbox] [role=option] > div {
+  position: relative; padding: 11px 16px 11px 46px !important;
+  border-radius: 999px !important; font-size: 14.5px; transition: background .2s;
+}
+.information-widget-search [role=listbox] [role=option] > div::before {
+  content: ""; position: absolute; left: 16px; top: 50%; width: 16px; height: 16px; transform: translateY(-50%);
+  background: var(--gx-mut);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22black%22%20stroke-width%3D%222.2%22%20stroke-linecap%3D%22round%22%3E%3Ccircle%20cx%3D%2211%22%20cy%3D%2211%22%20r%3D%227%22%2F%3E%3Cpath%20d%3D%22m20%2020-3.5-3.5%22%2F%3E%3C%2Fsvg%3E") center/contain no-repeat;
+          mask: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22black%22%20stroke-width%3D%222.2%22%20stroke-linecap%3D%22round%22%3E%3Ccircle%20cx%3D%2211%22%20cy%3D%2211%22%20r%3D%227%22%2F%3E%3Cpath%20d%3D%22m20%2020-3.5-3.5%22%2F%3E%3C%2Fsvg%3E") center/contain no-repeat;
+}
+/* Webadressen-Vorschläge (leerer Suchteil) → Globus */
+.information-widget-search [role=listbox] [role=option]:has(.whitespace-pre:first-child:empty) > div::before {
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22black%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%2212%22%20r%3D%229%22%2F%3E%3Cpath%20d%3D%22M3%2012h18M12%203c3%203.5%203%2014.5%200%2018M12%203c-3%203.5-3%2014.5%200%2018%22%2F%3E%3C%2Fsvg%3E");
+          mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22black%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%2212%22%20r%3D%229%22%2F%3E%3Cpath%20d%3D%22M3%2012h18M12%203c3%203.5%203%2014.5%200%2018M12%203c-3%203.5-3%2014.5%200%2018%22%2F%3E%3C%2Fsvg%3E");
+  background: var(--gx-a);
+}
+.information-widget-search [role=listbox] [role=option] .whitespace-pre:first-child { color: var(--gx-mut); }
+.information-widget-search [role=listbox] [role=option] .opacity-50 { opacity: 1 !important; color: #fff; font-weight: 650; }
+.information-widget-search [role=listbox] [role=option]:has(.whitespace-pre:first-child:empty) .opacity-50 { color: var(--gx-a); font-weight: 500; }
+.information-widget-search [role=listbox] [role=option]:hover > div { background: rgba(122, 162, 255, .10) !important; }
+.information-widget-search [role=listbox] [role=option][data-focus] > div { background: linear-gradient(90deg, rgba(122, 162, 255, .22), rgba(255, 155, 230, .10)) !important; }
+.information-widget-search [role=listbox] [role=option][data-focus] > div::before { background: var(--gx-c); }
+.information-widget-search [role=listbox] [role=option][data-focus] > div::after {
+  content: "Enter ↵"; position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
+  font-size: 11px; letter-spacing: .5px; color: var(--gx-mut);
+  border: 1px solid var(--gx-line); border-radius: 6px; padding: 1px 7px;
+}
+
+/* ==============================================================
+   QUICKLAUNCH (Tippen auf der Seite) · gleicher Look wie Such-Dropdown B
+   ============================================================== */
+[role=dialog][aria-modal=true] > .fixed.inset-0:first-child {
+  background: rgba(2, 3, 12, .62) !important; opacity: 1 !important;
+  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+}
+[role=dialog][aria-modal=true] dialog {
+  width: min(760px, 92vw) !important; min-width: 0 !important; max-width: none !important;
+  margin-top: 12vh !important; padding: 0 0 10px !important;
+  border-radius: 26px !important; overflow: hidden;
+  background:
+    url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%239aa4e0%22%20stroke-width%3D%222.2%22%20stroke-linecap%3D%22round%22%3E%3Ccircle%20cx%3D%2211%22%20cy%3D%2211%22%20r%3D%227%22%2F%3E%3Cpath%20d%3D%22m20%2020-3.5-3.5%22%2F%3E%3C%2Fsvg%3E") 22px 19px / 20px 20px no-repeat,
+    linear-gradient(180deg, rgb(20, 20, 62), rgb(10, 12, 38)) !important;
+  border: 1px solid var(--gx-line-hover) !important;
+  box-shadow: 0 0 0 4px rgba(197, 139, 255, .12), 0 30px 90px rgba(60, 40, 200, .5) !important;
+  color: var(--gx-tx) !important;
+}
+[role=dialog][aria-modal=true].visible dialog { animation: gx-ql-in .25s ease-out; }
+@keyframes gx-ql-in { from { opacity: 0; transform: translateY(-10px) scale(.97); } }
+[role=dialog][aria-modal=true] dialog input {
+  background: transparent !important; border: 0 !important; box-shadow: none !important;
+  padding: 0 22px 0 56px !important; height: 58px; font-size: 18px !important;
+  color: var(--gx-tx) !important; border-radius: 0 !important;
+}
+[role=dialog][aria-modal=true] dialog input::placeholder { color: var(--gx-mut) !important; }
+[role=dialog][aria-modal=true] dialog ul { margin: 0 !important; padding: 0 10px !important; }
+[role=dialog][aria-modal=true] dialog ul::before {
+  content: ""; display: block; height: 1px; margin: 0 8px 8px;
+  background: linear-gradient(90deg, transparent, var(--gx-line-hover), transparent);
+}
+[role=dialog][aria-modal=true] dialog ul li > button {
+color: var(--gx-tx) !important;
+  border-radius: 999px !important; padding: 8px 14px 8px 10px !important;
+  font-size: 15px !important; transition: background .2s;
+}
+[role=dialog][aria-modal=true] dialog ul li > button:hover { background: rgba(122, 162, 255, .10) !important; }
+/* Icon-Kreis: Dienste mit Logo */
+[role=dialog][aria-modal=true] dialog ul li > button .w-5 {
+  width: 34px !important; height: 34px; flex: none; margin-right: 14px !important;
+place-items: center; border-radius: 50%;
+  background: rgba(122, 162, 255, .12); box-shadow: inset 0 0 0 1px var(--gx-line);
+}
+[role=dialog][aria-modal=true] dialog ul li > button .w-5 img { width: 20px !important; height: 20px !important; }
+/* Lesezeichen: Homepage hängt das Kürzel (abbr, z. B. "ID") als Text hinter das Logo → ausblenden, Logo zentrieren */
+[role=dialog][aria-modal=true] dialog ul li > button .w-5:has(img) {
+  display: flex !important; justify-content: center;
+  font-size: 0 !important;
+}
+/* Lesezeichen ohne Logo: Kürzel mittig im Kreis */
+[role=dialog][aria-modal=true] dialog ul li > button .w-5:not(:has(img)) { font-size: 11px !important; font-weight: 700; color: var(--gx-tx); }
+/* Einträge ohne Logo (Google-Suche, Vorschläge) bekommen eine Lupe im Kreis */
+[role=dialog][aria-modal=true] dialog ul li > button > div:first-child:not(:has(img)) { position: relative; padding-left: 48px; min-height: 34px; }
+[role=dialog][aria-modal=true] dialog ul li > button > div:first-child:not(:has(img))::before {
+  content: ""; position: absolute; left: 0; top: 50%; width: 34px; height: 34px; transform: translateY(-50%);
+  border-radius: 50%; background: rgba(122, 162, 255, .12); box-shadow: inset 0 0 0 1px var(--gx-line);
+}
+[role=dialog][aria-modal=true] dialog ul li > button > div:first-child:not(:has(img))::after {
+  content: ""; position: absolute; left: 9px; top: 50%; width: 16px; height: 16px; transform: translateY(-50%);
+  background: var(--gx-mut);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22black%22%20stroke-width%3D%222.2%22%20stroke-linecap%3D%22round%22%3E%3Ccircle%20cx%3D%2211%22%20cy%3D%2211%22%20r%3D%227%22%2F%3E%3Cpath%20d%3D%22m20%2020-3.5-3.5%22%2F%3E%3C%2Fsvg%3E") center/contain no-repeat;
+          mask: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22black%22%20stroke-width%3D%222.2%22%20stroke-linecap%3D%22round%22%3E%3Ccircle%20cx%3D%2211%22%20cy%3D%2211%22%20r%3D%227%22%2F%3E%3Cpath%20d%3D%22m20%2020-3.5-3.5%22%2F%3E%3C%2Fsvg%3E") center/contain no-repeat;
+}
+[role=dialog][aria-modal=true] dialog ul li > button span.mr-4 { font-weight: 600; }
+[role=dialog][aria-modal=true] dialog ul li > button span.text-xs { color: var(--gx-mut) !important; font-size: 12.5px !important; }
+[role=dialog][aria-modal=true] dialog ul li > button .whitespace-pre:first-child { color: var(--gx-mut); font-weight: 400; }
+[role=dialog][aria-modal=true] dialog ul li > button .whitespace-pre.opacity-50 { opacity: 1 !important; color: #fff; font-weight: 650; }
+/* Typ-Chip rechts (Dienst / Suchen / Vorschlag) */
+[role=dialog][aria-modal=true] dialog ul li > button > div:last-child {
+  color: var(--gx-mut) !important; font-weight: 500 !important; font-size: 11px !important;
+  letter-spacing: .5px; border: 1px solid var(--gx-line); border-radius: 999px; padding: 2px 10px;
+}
+/* ausgewählte Zeile */
+[role=dialog][aria-modal=true] dialog ul li > button[class*="bg-theme-300"] { background: linear-gradient(90deg, rgba(122, 162, 255, .22), rgba(255, 155, 230, .10)) !important; }
+[role=dialog][aria-modal=true] dialog ul li > button[class*="bg-theme-300"] .w-5, [role=dialog][aria-modal=true] dialog ul li > button[class*="bg-theme-300"] > div:first-child:not(:has(img))::before {
+  background: conic-gradient(from 0deg, var(--gx-a), var(--gx-b), var(--gx-c), var(--gx-a));
+  box-shadow: 0 0 14px rgba(197, 139, 255, .55);
+}
+[role=dialog][aria-modal=true] dialog ul li > button[class*="bg-theme-300"] > div:first-child:not(:has(img))::after { background: #fff; }
+[role=dialog][aria-modal=true] dialog ul li > button[class*="bg-theme-300"] > div:last-child { color: #fff !important; border-color: var(--gx-line-hover); }
+[role=dialog][aria-modal=true] dialog ul li > button[class*="bg-theme-300"] > div:last-child::after { content: "  ↵"; }
+
+/* ==============================================================
+   UNTERGRUPPEN-RASTER – ein Reiter, 4 beschriftete Spalten
+   Reihenfolge in bookmarks.yaml: je 2 Links pro Spalte,
+   Spaltentitel hängt am 1. Link der Spalte (Position, nth-child); Texte: KONFIG-Block oben (--gx-sub1..4).
+   ============================================================== */
+.bookmark-group:has(> button [style*="/crosshairs-gps.svg"]) .bookmark-list {
+  --tk-gap: 28px;
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-rows: auto auto;
+  grid-auto-flow: column;
+
+  padding-top: 30px;
+  /* senkrechte Trennlinien mittig in den Spaltenabständen */
+  background:
+    linear-gradient(180deg, transparent, var(--gx-line) 15%, var(--gx-line) 85%, transparent) calc(25% - var(--tk-gap) / 4) 0 / 1px 100% no-repeat,
+    linear-gradient(180deg, transparent, var(--gx-line) 15%, var(--gx-line) 85%, transparent) 50% 0 / 1px 100% no-repeat,
+    linear-gradient(180deg, transparent, var(--gx-line) 15%, var(--gx-line) 85%, transparent) calc(75% + var(--tk-gap) / 4) 0 / 1px 100% no-repeat;
+}
+.bookmark-group:has(> button [style*="/crosshairs-gps.svg"]) .bookmark {
+max-width: 100%; position: relative;
+}
+/* Spaltentitel */
+.bookmark-group:has(> :where(button) [style*="/crosshairs-gps.svg"]) .bookmark:where(:nth-child(1), :nth-child(3), :nth-child(5), :nth-child(7))::before {
+  position: absolute; left: 4px; top: -28px;
+  font-size: 10.5px; font-weight: 600; letter-spacing: 1.6px; text-transform: uppercase;
+  line-height: 16px; white-space: nowrap;
+  color: var(--gx-mut);
+  background: linear-gradient(90deg, var(--gx-a), var(--gx-b)) 0 50% / 9px 2px no-repeat;
+  pointer-events: none;
+}
+.bookmark-group:has(> :where(button) [style*="/crosshairs-gps.svg"]) .bookmark:where(:nth-child(1))::before        { content: var(--gx-sub1); }
+.bookmark-group:has(> :where(button) [style*="/crosshairs-gps.svg"]) .bookmark:where(:nth-child(3))::before      { content: var(--gx-sub2); }
+.bookmark-group:has(> :where(button) [style*="/crosshairs-gps.svg"]) .bookmark:where(:nth-child(5))::before { content: var(--gx-sub3); }
+.bookmark-group:has(> :where(button) [style*="/crosshairs-gps.svg"]) .bookmark:where(:nth-child(7))::before { content: var(--gx-sub4); }
+
+/* schmale Fenster: 2 Spalten, je Untergruppe ein eigener Block */
+@media (max-width: 1023px) {
+  .bookmark-group:has(> button [style*="/crosshairs-gps.svg"]) .bookmark-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: repeat(4, auto);
+    background: linear-gradient(180deg, transparent, var(--gx-line) 10%, var(--gx-line) 90%, transparent) 50% 0 / 1px 100% no-repeat;
+  }
+  .bookmark-group:has(> :where(button) [style*="/crosshairs-gps.svg"]) .bookmark:where(:nth-child(2), :nth-child(4)) { margin-bottom: 30px !important; }
+}
+
+/* ============================================================
+   KONTINGENT-BH (Schwarzes Loch G2·6·4 Silber am Ringende von #gx-cl)
+   ============================================================ */
+#gx-cl .gx-cl-svg { overflow: visible; }
+.gx-bh-flow { animation: gxBhFlow 1.6s linear infinite; }
+@keyframes gxBhFlow { to { stroke-dashoffset: -19; } }
+.gx-bh-photon { animation: gxBhFlick 2.8s ease-in-out infinite; }
+@keyframes gxBhFlick { 0%, 100% { opacity: .75; } 50% { opacity: 1; } }
+.gx-bh-shim { animation: gxBhShim 2.2s ease-in-out infinite; }
+@keyframes gxBhShim { 0%, 100% { opacity: .35; } 50% { opacity: 1; } }
+.gx-bh-hot .gx-bh-flow { animation-duration: .6s; }
+.gx-bh-hot .gx-bh-shim, .gx-bh-hot .gx-bh-photon { animation-duration: 1.1s; }
+
+/* ==============================================================
+   WETTER-TAGESVERLAUF (Variante A): Klick auf einen Tag in "7 Tage"
+   tauscht die 24-h-Kurve gegen den Tagesverlauf 00–24 Uhr (custom.js).
+   ============================================================== */
+.gx-wx-hhead { display: flex; align-items: center; gap: 7px; height: 22px; margin-bottom: 8px; min-width: 0; overflow: hidden; }
+.gx-wx-hhead .gx-wx-sub { margin: 0; }
+.gx-wx-hhead.gx-day > * { animation: gx-dh-in .45s cubic-bezier(.2, .8, .2, 1) both; }
+.gx-wx-hhead.gx-day > :nth-child(2) { animation-delay: .05s; }
+.gx-wx-hhead.gx-day > :nth-child(3) { animation-delay: .1s; }
+.gx-wx-hhead.gx-day > :nth-child(4) { animation-delay: .15s; }
+.gx-wx-hhead.gx-day > :nth-child(5) { animation-delay: .2s; }
+@keyframes gx-dh-in { from { opacity: 0; transform: translateY(-5px); } }
+.gx-dh-t { font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: #e9ddff; font-weight: 600; white-space: nowrap; }
+.gx-dh-t em { font-style: normal; color: #9aa0d8; letter-spacing: .12em; margin-left: 6px; font-weight: 500; }
+.gx-wx-hhead .gx-chip {
+  display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; flex: none;
+  font-size: 11px; color: #c9cdf5; padding: 2px 9px; height: 20px; border-radius: 99px;
+  background: rgba(120, 110, 255, .12); border: 1px solid rgba(150, 140, 255, .22);
+}
+.gx-wx-hhead .gx-chip b { color: #fff; font-weight: 600; margin-right: 3px; }
+.gx-wx-hhead .gx-chip svg, .gx-wx-hhead .gx-chip .gx-ico { width: 14px; height: 14px; flex: none; }
+.gx-wx-hhead .gx-chip-rain svg { width: 10px; height: 10px; }
+.gx-wx-hhead .gx-chip-sun svg { color: #ffd59a; }
+.gx-wx-hhead .gx-back {
+  margin-left: auto; flex: none; line-height: 1; cursor: pointer; white-space: nowrap;
+
+}
+.gx-wx-hhead .gx-back:hover { background: rgba(255, 155, 230, .22); box-shadow: 0 0 18px rgba(255, 155, 230, .4); }
+/* Variante A: Zurück-Button als runder Icon-Button (spart Platz an Regentagen) */
+.gx-wx-hhead .gx-back { width: 22px; height: 22px; display: grid; place-items: center; font-size: 13px; }
+.gx-wx-hhead .gx-back:hover { transform: rotate(-180deg); }
+.gx-wx-days li[data-i] { cursor: pointer; position: relative; transition: background .3s, box-shadow .3s; }
+.gx-wx-days li[data-i]:focus-visible { outline: none; box-shadow: inset 0 0 0 1px rgba(197, 139, 255, .6); }
+.gx-wx-days li.gx-sel {
+  background: linear-gradient(90deg, rgba(255, 155, 230, .18), rgba(122, 162, 255, .10));
+  box-shadow: inset 0 0 0 1px rgba(197, 139, 255, .45), 0 0 18px rgba(197, 139, 255, .25);
+}
+.gx-wx-days li.gx-sel::before {
+  content: ""; position: absolute; left: -6px; top: 22%; bottom: 22%; width: 3px; border-radius: 3px;
+  background: linear-gradient(#ff9be6, #7aa2ff); box-shadow: 0 0 10px #ff9be6; animation: gx-dh-in .4s both;
+}
+.gx-wx-days li.gx-sel .gx-d-name { color: #ffc4f1; }
+
+/* ==============================================================
+   LINK-RASTER (Variante A) – Lesezeichen-Gruppen als Bento 8 | 4
+   Reihe 3+4: Shopping (8, über 2 Reihen) | Shop-Check / Videos (4)
+   Reihe 5:   3D-Modelle (8) | Arbeit (4)      Reihe 6: Gruppe mit 4 Unterspalten (12)
+   Gruppen per :has(> button [style*="/<mdi-icon>.svg"]) am Layout-Icon aus
+   settings.yaml adressiert (unabhängig von Reihenfolge und Linknamen) –
+   beim Ändern eines Gruppen-Icons diesen Block mitpflegen.
+   Alle Pills füllen ihre Rasterzelle = gleich breit.
+   ============================================================== */
+:root {
+  --gx-vline-r: linear-gradient(180deg, transparent, var(--gx-line) 12%, var(--gx-line) 88%, transparent) 100% 20px / 1px calc(100% - 40px) no-repeat;
+}
+#layout-groups > .bookmark-group:has(> button [style*="/cart-outline.svg"])     { --lk-cols: 3; }
+#layout-groups > .bookmark-group:has(> button [style*="/printer-3d-nozzle.svg"]) { --lk-cols: 3; }
+#layout-groups > .bookmark-group:has(> button [style*="/shield-check-outline.svg"]) { --lk-cols: 2; }
+
+#layout-groups > .bookmark-group:not(:has(> button [style*="/crosshairs-gps.svg"])) .bookmark-list {
+  display: grid !important;
+  grid-template-columns: repeat(var(--lk-cols, 2), minmax(0, 1fr));
+}
+/* Pills füllen die Zelle (auch in der Gruppe mit Unterspalten) */
+#layout-groups > .bookmark-group .bookmark { min-width: 0; justify-self: stretch !important; }
+#layout-groups > .bookmark-group .bookmark > a { width: 100%; max-width: 100% !important; position: relative; }
+#layout-groups > .bookmark-group .bookmark-text { min-width: 0; }
+#layout-groups > .bookmark-group :is(.bookmark-name, .bookmark-description) {
+  max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+/* Öffnen-Pfeil wie bei den Diensten */
+#layout-groups > .bookmark-group .bookmark > a::after {
+  content: ""; position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+  width: 26px; height: 26px; border-radius: 50%;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239aa4e0' stroke-width='2' stroke-linecap='round'><path d='M7 17L17 7M8 7h9v9'/></svg>") center / 12px no-repeat;
+transition: opacity .3s, border-color .3s, background-color .3s;
+}
+#layout-groups > .bookmark-group .bookmark > a:hover::after {
+  opacity: 1; border-color: var(--gx-line-hover); background-color: rgba(197, 139, 255, .15);
+}
+
+/* schmale 2er-Spalten (Shop-Check, Videos): Pfeil nur beim Hover, damit Namen ganz sichtbar bleiben */
+#layout-groups > .bookmark-group:is(:has(> button [style*="/shield-check-outline.svg"]), :has(> button [style*="/play-circle-outline.svg"])) .bookmark > a::after {
+background-color: rgba(40, 34, 96, .95);
+}
+#layout-groups > .bookmark-group:is(:has(> button [style*="/shield-check-outline.svg"]), :has(> button [style*="/play-circle-outline.svg"])) .bookmark > a:hover::after { opacity: 1; }
+
+@media (max-width: 1023px) {
+  #layout-groups > .bookmark-group:not(:has(> button [style*="/crosshairs-gps.svg"])) .bookmark-list {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  }
+}
+
+/* ==============================================================
+   KONTINGENT-RESET-FIT (#gx-cl Kopfzeile passt sich schmalen Hälften an)
+   Bei < 312px Info-Breite: "Reset in" → Reset-Symbol, engere Abstände,
+   Label kürzt notfalls mit "…" statt die Restzeit abzuschneiden.
+   ============================================================== */
+#gx-cl .gx-cl-info { container-type: inline-size; }
+#gx-cl .gx-cl-row:first-child > * { flex: none; }
+#gx-cl .gx-cl-row:first-child > .gx-cl-lbl { flex: 0 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+@container (max-width: 312px) {
+  #gx-cl .gx-cl-row:first-child { gap: 6px; }
+  #gx-cl .gx-cl-lbl { letter-spacing: .1em; }
+  #gx-cl .gx-cl-reset { font-size: 0; display: inline-flex; align-items: baseline; gap: 4px; }
+  #gx-cl .gx-cl-reset::before {
+    content: ""; width: 11px; height: 11px; align-self: center; background: var(--cl-mut);
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 12a8 8 0 1 1-2.34-5.66'/%3E%3Cpath d='M20 4v5h-5'/%3E%3C/svg%3E") center / contain no-repeat;
+            mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 12a8 8 0 1 1-2.34-5.66'/%3E%3Cpath d='M20 4v5h-5'/%3E%3C/svg%3E") center / contain no-repeat;
+  }
+  #gx-cl .gx-cl-reset b { font-size: 15px; }
+}
+/* sehr schmale Fenster: Panel schon ab 1400px unter die Uhr (vorher 1180px) */
+@media (max-width: 1400px) {
+  #widgets-wrap { grid-template-areas: "time" "date" "claude" "deck" "search" !important; }
+  #gx-cl { position: relative; top: auto; right: auto; width: auto; grid-area: claude; flex-wrap: wrap; margin: 12px 0; }
+  #gx-cl .gx-cl-half { flex-basis: 320px; }
+  #gx-cl .gx-cl-brand { flex-direction: row; width: auto; }
+  #gx-cl .gx-cl-sep { display: none; }
+}
+
+/* ==============================================================
+   ZWEI-DECKS (Variante H · Dezente Decks) – Heimnetz | Web
+   Zwei Glas-Panels Ton in Ton; Unterschied nur über die Lichtkante
+   oben (Heimnetz Blau→Violett, Web Violett→Pink) und das Kopf-Icon.
+   custom.js (Block "Zwei-Decks H") hängt an #layout-groups an:
+   .gx-dk-bg.home/.web (Glasflächen über mehrere Rasterzeilen) und
+   .gx-dk-head.home/.web (Kopfzeilen mit Zähler). Zeilen: 1 Kopf Heimnetz,
+   2–3 Dienste, 4 Kopf Web, 5–8 Lesezeichen (überschreibt KOMMANDOPULT /
+   LINK-RASTER ab 1024px). Neuer Lesezeichen-Reiter → Zeile ≤ 8 vergeben
+   oder .gx-dk-bg.web weiter spannen.
+   ============================================================== */
+/* altes Gesamt-Panel auflösen – die Decks zeichnen jetzt die Flächen */
+#layout-groups {
+  background: none !important; border: 0 !important; box-shadow: none !important;
+  -webkit-backdrop-filter: none !important; backdrop-filter: none !important;
+border-radius: 0 !important;
+}
+#layout-groups::before { display: none !important; }
+#layout-groups > .services-group, #layout-groups > .bookmark-group { z-index: 1; }
+
+.gx-dk-bg, .gx-dk-head { grid-column: 1 / -1; position: relative; }
+.gx-dk-bg {
+  z-index: 0; pointer-events: none;
+  border-radius: 22px;
+  border: 1px solid var(--gx-line);
+  -webkit-backdrop-filter: blur(16px) saturate(1.4); backdrop-filter: blur(16px) saturate(1.4);
+  box-shadow: 0 10px 50px rgba(40, 30, 140, .22), inset 0 1px 0 rgba(255, 255, 255, .07);
+}
+/* Glasfüllung wie Wetter/Suche/Uhr (überschreibt die Trennlinie aus KOMMANDOPULT :not(:first-child)) */
+#layout-groups > .gx-dk-bg { background: var(--gx-panel) !important; }
+.gx-dk-bg::before {                                  /* Lichtkante oben – einziges Farbmerkmal */
+  content: ""; position: absolute; left: 24px; right: 24px; top: -1px; height: 1px;
+  background: linear-gradient(90deg, transparent, #7aa2ff 30%, #c58bff 70%, transparent);
+  opacity: .9;
+}
+.gx-dk-bg.web { margin-top: var(--dk-gap); }
+.gx-dk-bg.web::before { background: linear-gradient(90deg, transparent, #c58bff 30%, #ff9be6 70%, transparent); }
+
+/* Kopfzeilen */
+.gx-dk-head {
+ align-items: center; gap: 14px;
+
+}
+.gx-dk-head.web { margin-top: var(--dk-gap); }
+
+@media (min-width: 1024px) {
+  .gx-dk-head.home { grid-row: 1; }
+  .gx-dk-bg.home   { grid-row: 1 / 4; }
+  .gx-dk-head.web  { grid-row: 4; }
+  #layout-groups > :nth-child(1), #layout-groups > :nth-child(2), #layout-groups > :nth-child(5) { grid-row: 2 !important; }
+  #layout-groups > .services-group:nth-child(1) { background: none !important; }
+  #layout-groups > .services-group:is(:nth-child(2), :nth-child(5)) { background: var(--gx-vline) !important; }
+}
+/* schmal: Decks gestapelt, Kopfzeilen als eigene Glas-Streifen */
+@media (max-width: 1023px) {
+  .gx-dk-bg { display: none; }
+  .gx-dk-head { border: 1px solid var(--gx-line); border-radius: 18px; margin: 8px 0 4px; }
+  #layout-groups { display: flex !important; flex-direction: column; }
+  #layout-groups > .services-group { order: 1; }
+  .gx-dk-head.web { order: 2; }
+  #layout-groups > .bookmark-group { order: 3; }
+}
+
+/* ==============================================================
+   WEB-SPOTLIGHT – Web-Deck bekommt dasselbe Maus-Spotlight wie Heimnetz
+   (Gruppe: weiches Licht; Pill: leuchtender Rand). --mx/--my aus custom.js.
+   Pill-Rand nutzt a::before, weil a::after der Öffnen-Pfeil ist.
+   ============================================================== */
+#layout-groups > .bookmark-group { position: relative; }
+#layout-groups > .bookmark-group.bookmark-group::after {
+  display: block !important;
+  content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 0;
+  opacity: 0; transition: opacity .5s ease;
+  background: radial-gradient(340px circle at var(--mx, 50%) var(--my, 50%), rgba(170, 130, 255, .09), transparent 70%);
+}
+#layout-groups > .bookmark-group.bookmark-group:hover::after { opacity: 1; }
+#layout-groups > .bookmark-group .bookmark > a::before {
+  content: ""; position: absolute; inset: -1px; border-radius: inherit; pointer-events: none;
+  padding: 1px; opacity: 0; transition: opacity .5s ease;
+  background: radial-gradient(220px circle at var(--mx, 50%) var(--my, 50%), rgba(255, 190, 245, .85), rgba(122, 162, 255, .35) 40%, transparent 70%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+}
+#layout-groups > .bookmark-group .bookmark > a:hover::before { opacity: 1; }
+
+/* ==============================================================
+   REGEN-K3 (Galaxy, entspannt) – Regen im 24-h-/Tagesverlauf
+   Regenfenster ≥ 40 % (weiche Zone + Label), Risiko-Kurve 0–100 %,
+   Mengen-Hügel mm/h (Farbe je Stunde: gering/möglich/wahrscheinlich),
+   (ohne Summenkurve). Code: custom.js renderChart.
+   ============================================================== */
+.gx-wx-zl rect { fill: rgba(14, 12, 44, .92); stroke: rgba(197, 180, 255, .55); }
+.gx-wx-zl text { font-size: 10px; font-weight: 600; fill: #c9c2ff; text-anchor: middle; }
+.gx-wx-riskarea { fill-opacity: .10; }
+.gx-wx-r50 { stroke: rgba(185, 168, 255, .30); stroke-dasharray: 2 5; }
+.gx-wx-risk { fill: none; stroke-width: 1.6; }
+.gx-wx-hill { fill-opacity: .8; }
+.gx-wx-hilll { fill: none; stroke-width: 1.1; }
+.gx-wx-pk { font-size: 9.5px; font-weight: 600; text-anchor: middle; }
+.gx-wx-intro .gx-wx-hill, .gx-wx-intro .gx-wx-riskarea, .gx-wx-intro .gx-wx-risk, .gx-wx-intro .gx-wx-hilll {
+  transform-box: fill-box; transform-origin: 50% 100%; animation: gx-wx-grow .9s cubic-bezier(.2, .8, .2, 1) .3s both;
+}
+.gx-wx-intro .gx-wx-zone, .gx-wx-intro .gx-wx-zl, .gx-wx-intro .gx-wx-pk { animation: gx-wx-fade 1s .5s both; }
+.gx-wx-hhead .gx-chip-rain svg { color: #b9a8ff; }
+.gx-wx-hhead .gx-chip-rain b { margin: 0 0 0 1px; }
+.gx-wx-hhead .gx-chip-rain em { font-style: normal; color: #c9c2ff; margin-left: 4px; }
+.gx-wx-hhead .gx-chip-rain.gx-hot {
+  color: #e0d9ff; border-color: rgba(185, 168, 255, .45);
+  background: linear-gradient(90deg, rgba(122, 162, 255, .22), rgba(197, 139, 255, .16)); box-shadow: 0 0 12px rgba(185, 168, 255, .22);
+}
+
+/* ==============================================================
+   UNWETTER-WARNUNG (Variante A · wie KI-Kontingent)
+   custom.js setzt #gx-wx.gx-sev1 (Starkregen ≥ 4 mm/h / ≥ 25 mm)
+   bzw. .gx-sev2 (Gewitter ≥ 40 % oder ≥ 10 mm/h) für die gezeigte
+   Ansicht; Vorschau: URL-Hash #wxdemo=warn | #wxdemo=crit
+   ============================================================== */
+@keyframes gx-wx-pulse-a {
+  0%, 100% { box-shadow: 0 0 0 1px rgba(255,181,71,.12) inset, 0 0 24px -8px rgba(255,181,71,.35); }
+  50%      { box-shadow: 0 0 0 1px rgba(255,181,71,.26) inset, 0 0 40px -4px rgba(255,181,71,.55); }
+}
+@keyframes gx-wx-wr { from { transform: scale(1); opacity: 1; } to { transform: scale(3); opacity: 0; } }
+#gx-wx.gx-sev2 {
+  border-color: rgba(255, 77, 109, .6);
+  background: radial-gradient(ellipse 40% 90% at 0% 50%, rgba(255, 77, 109, .16), transparent 70%), var(--gx-panel);
+  animation: gx-wx-in .9s cubic-bezier(.2, .8, .2, 1) both, gxClPulse 2.2s ease-in-out infinite;
+}
+#gx-wx.gx-sev1 {
+  border-color: rgba(255, 181, 71, .55);
+  background: radial-gradient(ellipse 40% 90% at 0% 50%, rgba(255, 181, 71, .12), transparent 70%), var(--gx-panel);
+  animation: gx-wx-in .9s cubic-bezier(.2, .8, .2, 1) both, gx-wx-pulse-a 2.6s ease-in-out infinite;
+}
+#gx-wx.gx-sev2::before { background: linear-gradient(90deg, transparent, #ff4d6d, #ff8a5c, transparent); opacity: .95; }
+#gx-wx.gx-sev1::before { background: linear-gradient(90deg, transparent, #ffb547, #ff7ad9, transparent); opacity: .9; }
+#gx-wx.gx-sev2::after { background: radial-gradient(closest-side, rgba(255, 77, 109, .12), rgba(255, 138, 92, .04) 55%, transparent); }
+#gx-wx.gx-sev1::after { background: radial-gradient(closest-side, rgba(255, 181, 71, .10), rgba(255, 122, 217, .04) 55%, transparent); }
+.gx-wx-dz { stroke-opacity: .5; }
+.gx-wx-dl { animation: gxClBlink 1.4s ease-in-out infinite; }
+.gx-wx-dl rect { fill: rgba(40, 10, 24, .92); }
+.gx-wx-dl text { font-size: 10px; font-weight: 600; text-anchor: middle; }
+.gx-wx-dl.gx-sev2 text, .gx-wx-pkt.gx-sev2 { fill: #ff8fa3; }
+.gx-wx-dl.gx-sev1 text, .gx-wx-pkt.gx-sev1 { fill: #ffd08a; }
+.gx-wx-pkd { fill: #fff; }
+.gx-wx-warn { fill: none; stroke-width: 2; stroke-opacity: .5; transform-box: fill-box; transform-origin: center; animation: gx-wx-wr 1.8s ease-out infinite; }
+.gx-wx-warn.gx-w2 { animation-delay: .6s; stroke-width: 1.4; }
+.gx-wx-hhead .gx-chip.gx-sev2 { color: #ff8fa3; border-color: rgba(255, 77, 109, .6); background: rgba(255, 77, 109, .14); box-shadow: 0 0 12px rgba(255, 77, 109, .25); }
+.gx-wx-hhead .gx-chip.gx-sev1 { color: #ffd08a; border-color: rgba(255, 181, 71, .55); background: rgba(255, 181, 71, .12); }
+.gx-wx-hhead .gx-sevchip { animation: gxClBlink 1.4s ease-in-out infinite; }
+.gx-wx-days li.gx-sev2 .gx-d-rain { color: #ff8fa3; font-weight: 700; }
+.gx-wx-days li.gx-sev1 .gx-d-rain { color: #ffd08a; font-weight: 700; }
+.gx-wx-days li .gx-d-rain i { font-style: normal; font-size: 10px; }
+.gx-wx-days li.gx-sev2 { box-shadow: inset 0 0 0 1px rgba(255, 77, 109, .28); }
+.gx-wx-days li.gx-sev1 { box-shadow: inset 0 0 0 1px rgba(255, 181, 71, .25); }
+.gx-wx-days li.gx-sel.gx-sev2 { background: linear-gradient(90deg, rgba(255, 77, 109, .22), rgba(255, 138, 92, .08)); box-shadow: inset 0 0 0 1px rgba(255, 77, 109, .55), 0 0 16px rgba(255, 77, 109, .25); }
+.gx-wx-days li.gx-sel.gx-sev2::before { background: linear-gradient(#ff4d6d, #ff8a5c); box-shadow: 0 0 10px #ff4d6d; }
+.gx-wx-days li.gx-sel.gx-sev1 { background: linear-gradient(90deg, rgba(255, 181, 71, .18), rgba(255, 122, 217, .08)); box-shadow: inset 0 0 0 1px rgba(255, 181, 71, .5); }
+.gx-wx-days li.gx-sel.gx-sev1::before { background: linear-gradient(#ffb547, #ff7ad9); box-shadow: 0 0 10px #ffb547; }
+
+/* ==============================================================
+   KONTINGENT-WARNUNG (Stufe "knapp", 70–89 % genutzt) – gleiche Zustands-
+   Sprache wie UNWETTER-WARNUNG sev1: Amber-Rahmen, Amber-Glühen links,
+   weiches Pulsieren 2,6 s, Chip "⚠ knapp" blinkt, ein Amber-Ring
+   pulsiert um den betroffenen Ring, Schwarzes Loch amberfarben.
+   custom.js setzt #gx-cl.warn (kritisch ≥ 90 % bleibt .crit).
+   Vorschau: URL-Hash #cldemo=warn | #cldemo=crit
+   ============================================================== */
+#gx-cl.warn {
+  border-color: rgba(255, 181, 71, .5);
+  animation: gx-wx-pulse-a 2.6s ease-in-out infinite;
+}
+#gx-cl.warn::before {
+  content: ""; position: absolute; inset: 0; pointer-events: none; border-radius: inherit;
+  background: radial-gradient(ellipse 40% 90% at 0% 50%, rgba(255, 181, 71, .14), transparent 70%);
+}
+#gx-cl .gx-cl-warn.gx-cl-wa { stroke: #ffb547; stroke-opacity: .45; animation-duration: 2.6s; }
+#gx-cl .gx-cl-orbit-w { stroke: rgba(255, 181, 71, .28); }
+#gx-cl .gx-bh-warm .gx-bh-flow { animation-duration: 1s; }
+#gx-cl .gx-bh-warm .gx-bh-shim { animation-duration: 1.6s; }
+
+/* ==============================================================
+   KONTINGENT-FRISCHE (#gx-cl: "Stand HH:MM" orange, Fenster "bereit")
+   ============================================================== */
+#gx-cl .gx-cl-stale { color: #ffb547; font-variant-numeric: tabular-nums; white-space: nowrap; }
+#gx-cl .gx-cl-stale i { animation: none; }
+#gx-cl.stale .gx-cl-half { opacity: .82; filter: saturate(.8); }
+#gx-cl.stale .gx-cl-half.gx-cl-idle { opacity: 1; filter: none; }
+#gx-cl .gx-cl-idle .gx-cl-foot .gx-cl-under { color: var(--cl-mut); }
+#gx-cl .gx-cl-reset.gx-cl-since { font-size: 12.5px; }
+#gx-cl .gx-cl-reset.gx-cl-since::before { display: none; }
+
+/* ==============================================================
+   WARNLABEL-D4 – Zonen-Label zweizeilig am Zonenfuß (custom.js zLabel):
+   Zeile 1 Art + Uhrzeit, Zeile 2 max. Wahrscheinlichkeit · mm/h
+   ============================================================== */
+.gx-wx-zl text.gx-l2, .gx-wx-dl text.gx-l2 { font-size: 9.5px; font-weight: 500; opacity: .9; }
+
+/* ===== ZURÜCK-BUTTON (Variante A3 · Glas-Kern, Countdown-Ring) ===== */
+.gx-wx-hhead:has(.gx-bkA) { overflow: clip; overflow-clip-margin: 10px; }
+.gx-wx-hhead .gx-back.gx-bkA {
+  position: relative; width: 22px; height: 22px; margin-right: 3px; display: grid; place-items: center;
+  border: 0; border-radius: 50%; color: #c9cdf5; transform: none !important;
+  background: radial-gradient(circle at 35% 30%, rgba(255, 255, 255, .18), rgba(120, 110, 255, .12) 55%, rgba(20, 20, 60, .4));
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .06);
+  transition: box-shadow .3s, color .3s;
+}
+.gx-back.gx-bkA .gx-bk-ring { position: absolute; left: -2px; top: -2px; width: 26px; height: 26px; transform: rotate(-90deg); overflow: visible; }
+.gx-back.gx-bkA .gx-bk-ring circle { fill: none; stroke-width: 1.6; }
+.gx-back.gx-bkA .gx-bk-trk { stroke: rgba(150, 140, 255, .18); }
+.gx-back.gx-bkA .gx-bk-prg { stroke: url(#gxBkG); stroke-linecap: round; stroke-dasharray: 69.12; }
+.gx-back.gx-bkA .gx-bk-x { width: 9px; height: 9px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; transition: transform .35s cubic-bezier(.2, .8, .2, 1); }
+.gx-wx-hhead .gx-back.gx-bkA:hover, .gx-wx-hhead .gx-back.gx-bkA:focus-visible {
+  color: #fff; outline: none; background: radial-gradient(circle at 35% 30%, rgba(255, 255, 255, .18), rgba(120, 110, 255, .12) 55%, rgba(20, 20, 60, .4));
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .12), 0 0 10px rgba(197, 139, 255, .4);
+}
+.gx-back.gx-bkA:hover .gx-bk-x, .gx-back.gx-bkA:focus-visible .gx-bk-x { transform: rotate(90deg); }
+.gx-back.gx-bkA:hover .gx-bk-prg { animation: none !important; stroke-dashoffset: 0; }
+@keyframes gx-bk-drain { to { stroke-dashoffset: 69.12; } }
+
+/* ==============================================================
+   TANKEN-PANEL (P2 · Kerbe, Variante A · Wetter-Zwilling)
+   Raster wie #gx-wx (1fr | 1.75fr | 1fr, Spalten 22px, Trennlinien);
+   Höhe = gemessene Wetter-Höhe (--tk-h, gesetzt von custom.js).
+   Reiter #gx-tabs sitzen als Kerbe auf der Oberkante von grid-area
+   "deck"; html[data-gx-tab] schaltet #gx-wx <-> #gx-tk (custom.js
+   Block "Tanken-Panel"). Zustände: .warn ab Ø7T + 4 ct, .crit ab
+   Ø7T + 8 ct (E5). Demo: #tkdemo=warn|crit
+   ============================================================== */
+#gx-wx { padding-top: 30px !important; }
+html[data-gx-tab="fuel"] #gx-wx { display: none !important; }
+html:not([data-gx-tab="fuel"]) #gx-tk { display: none !important; }
+
+#gx-tabs {
+  grid-area: deck; align-self: start; justify-self: start;
+  position: relative; z-index: 3; margin: 0 0 0 22px; transform: translateY(1px);
+  display: flex; gap: 6px; padding: 3px; border-radius: 999px;
+  border: 1px solid var(--gx-line); background: rgba(9, 11, 34, .96);
+  box-shadow: 0 6px 24px -10px rgba(0, 0, 0, .8);
+}
+#gx-tabs .gx-tab {
+  all: unset; cursor: pointer; display: flex; align-items: center; gap: 8px;
+  padding: 6px 13px; border-radius: 999px; font-size: 12px; font-weight: 700;
+  letter-spacing: .06em; text-transform: uppercase; color: var(--gx-mut); transition: color .25s, background .25s;
+}
+#gx-tabs .gx-tab:hover { color: var(--gx-tx); }
+#gx-tabs .gx-tab.on {
+  color: #fff; background: linear-gradient(90deg, rgba(122,162,255,.22), rgba(197,139,255,.22));
+  box-shadow: 0 0 0 1px rgba(197,139,255,.35) inset, 0 0 18px -6px rgba(197,139,255,.7);
+}
+#gx-tabs .gx-tab:focus-visible { outline: 2px solid #c58bff; outline-offset: 2px; }
+#gx-tabs .gx-tab-b {
+  font-family: "JetBrains Mono", Consolas, monospace; font-size: 11.5px; letter-spacing: 0; text-transform: none;
+  padding: 2px 7px; border-radius: 999px; background: rgba(94,231,255,.12); color: #9ff0ff; border: 1px solid rgba(94,231,255,.3);
+}
+#gx-tabs [data-t="wx"] .gx-tab-b { background: rgba(197,139,255,.12); color: #e2d4ff; border-color: rgba(197,139,255,.3); }
+#gx-tabs .gx-tab-b.w { background: rgba(255,181,71,.14); color: #ffd08a; border-color: rgba(255,181,71,.45); animation: gxClBlink 1.4s ease-in-out infinite; }
+#gx-tabs .gx-tab-b.h { background: rgba(255,77,109,.14); color: #ff8fa3; border-color: rgba(255,77,109,.55); animation: gxClBlink 1.1s ease-in-out infinite; }
+
+#gx-tk {
+  grid-area: deck; position: relative; overflow: hidden;
+  padding: 32px 22px 16px;
+  display: flex; flex-direction: column; height: var(--tk-h, 425px); min-height: 425px;
+  background: var(--gx-panel); border: 1px solid var(--gx-line); border-radius: 22px;
+  -webkit-backdrop-filter: blur(16px) saturate(1.4); backdrop-filter: blur(16px) saturate(1.4);
+  box-shadow: 0 10px 50px rgba(40, 30, 140, .22), inset 0 1px 0 rgba(255, 255, 255, .07);
+  animation: gx-wx-in .7s cubic-bezier(.2, .8, .2, 1) both; transition: border-color .4s;
+}
+#gx-tk::before {
+  content: ""; position: absolute; left: 22px; right: 22px; top: 0; height: 1px; opacity: .8;
+  background: linear-gradient(90deg, transparent, #7aa2ff, #c58bff, #ff9be6, transparent);
+}
+#gx-tk.warn { border-color: rgba(255,181,71,.5); animation: gx-wx-in .7s cubic-bezier(.2,.8,.2,1) both, gx-wx-pulse-a 2.6s ease-in-out infinite;
+  background: radial-gradient(ellipse 40% 90% at 0% 50%, rgba(255,181,71,.13), transparent 70%), var(--gx-panel); }
+#gx-tk.crit { border-color: rgba(255,77,109,.58); animation: gx-wx-in .7s cubic-bezier(.2,.8,.2,1) both, gxClPulse 2.2s ease-in-out infinite;
+  background: radial-gradient(ellipse 40% 90% at 0% 50%, rgba(255,77,109,.17), transparent 70%), var(--gx-panel); }
+#gx-tk.warn::before { background: linear-gradient(90deg, transparent, #ffb547, #ff7ad9, transparent); }
+#gx-tk.crit::before { background: linear-gradient(90deg, transparent, #ff4d6d, #ff8a5c, transparent); }
+
+#gx-tk .gx-tk-grid { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.75fr) minmax(0, 1fr); }
+#gx-tk .gx-tk-col { min-width: 0; min-height: 0; display: flex; flex-direction: column; padding: 0 22px; }
+#gx-tk .gx-tk-col:first-child { padding-left: 0; }
+#gx-tk .gx-tk-col:last-child { padding-right: 0; }
+#gx-tk .gx-tk-col + .gx-tk-col { border-left: 1px solid rgba(150, 170, 255, .12); }
+
+/* Jetzt-Spalte */
+#gx-tk .gx-tk-now { gap: 11px; }
+#gx-tk .gx-tk-top { display: flex; align-items: center; gap: 10px; min-width: 0; }
+#gx-tk .gx-tk-ico { flex: none; width: 34px; height: 34px; border-radius: 10px; border: 1px solid var(--gx-line); display: grid; place-items: center;
+  background: rgba(122,162,255,.08); color: #b9a8ff; }
+#gx-tk .gx-tk-ttl { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+#gx-tk .gx-tk-ttl b { font-size: 13px; font-weight: 800; letter-spacing: .2em; white-space: nowrap; }
+#gx-tk .gx-tk-ttl > span { font-size: 12px; color: var(--gx-mut); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#gx-tk .gx-tk-ttl i { font-style: normal; color: #4dffb5; }
+#gx-tk .gx-tk-ttl i.cl { color: #ff6b84; }
+#gx-tk .gx-tk-ttl .old { color: #ffb547; }
+#gx-tk .gx-tk-pr { margin-top: 6px; white-space: nowrap; }
+#gx-tk .gx-tk-price sup { font-size: .5em; vertical-align: top; position: relative; top: .08em; margin-left: 1px; }
+#gx-tk.crit .gx-tk-price { background-image: linear-gradient(90deg, #ff4d6d, #ff8a5c); }
+#gx-tk .gx-tk-unit { font-size: 13px; color: var(--gx-mut); font-weight: 600; margin-left: 6px; }
+#gx-tk .gx-tk-dl { font-size: 12.5px; font-weight: 700; }
+#gx-tk .gx-tk-dl.dn { color: #9ff0ff; } #gx-tk .gx-tk-dl.up { color: #ffd08a; } #gx-tk.crit .gx-tk-dl.up { color: #ff8fa3; }
+#gx-tk .gx-tk-chip { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 999px;
+  border: 1px solid var(--gx-line); white-space: nowrap; }
+#gx-tk .gx-tk-chip.ok { color: #9ff0ff; border-color: rgba(94,231,255,.3); }
+#gx-tk .gx-tk-chip.ok i { width: 7px; height: 7px; border-radius: 50%; background: #4dffb5; box-shadow: 0 0 8px #4dffb5; }
+#gx-tk .gx-tk-chip.nd { color: var(--gx-mut); }
+#gx-tk .gx-tk-chip.nd i { width: 7px; height: 7px; border-radius: 50%; background: #8189bd; animation: gx-blink 3s ease-in-out infinite; }
+#gx-tk .gx-tk-chip.w { color: #ffb547; border-color: rgba(255,181,71,.45); background: rgba(255,181,71,.08); animation: gxClBlink 1.4s ease-in-out infinite; }
+#gx-tk .gx-tk-chip.h { color: #ff6b84; border-color: rgba(255,77,109,.55); background: rgba(255,77,109,.12); animation: gxClBlink 1.1s ease-in-out infinite; }
+#gx-tk .gx-tk-tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+
+/* Spaltenköpfe + Umschalter */
+#gx-tk .gx-tk-hh { display: flex; align-items: center; gap: 10px; height: 28px; margin-bottom: 6px; flex: none; }
+#gx-tk .gx-tk-hh .sp { flex: 1; }
+#gx-tk .gx-tk-cap { font-size: 10.5px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; color: var(--gx-mut); white-space: nowrap; }
+#gx-tk .gx-tk-cap b { color: var(--gx-tx); font-weight: 800; }
+#gx-tk .gx-tk-seg { display: flex; padding: 3px; border: 1px solid var(--gx-line); border-radius: 999px; background: rgba(5,6,26,.5); }
+#gx-tk .gx-tk-seg button { all: unset; cursor: pointer; font-size: 12px; font-weight: 700; padding: 4px 12px; border-radius: 999px; color: var(--gx-mut); }
+#gx-tk .gx-tk-seg button.on { color: #fff; background: linear-gradient(90deg, rgba(122,162,255,.4), rgba(197,139,255,.4)); }
+
+/* Wochentage */
+#gx-tk .gx-tk-days { flex: 1; min-height: 0; display: flex; flex-direction: column; justify-content: space-between; gap: 3px; }
+#gx-tk .gx-tk-days li { display: grid; grid-template-columns: 70px 1fr 50px; align-items: center; gap: 10px; height: 31px; padding: 0 10px;
+  border-radius: 11px; font-size: 12.5px; border: 1px solid transparent; transition: background .3s; }
+#gx-tk .gx-tk-days li:hover { background: rgba(120, 110, 255, .13); }
+#gx-tk .gx-tk-days .n { font-weight: 700; white-space: nowrap; }
+#gx-tk .gx-tk-days .n small { color: var(--gx-mut); font-weight: 500; margin-left: 4px; }
+#gx-tk .gx-tk-days li:first-child .n { color: var(--gx-c); }
+#gx-tk .gx-tk-days .tr { position: relative; height: 6px; border-radius: 9px; background: rgba(150,170,255,.1); }
+#gx-tk .gx-tk-days .tr i { position: absolute; top: 0; bottom: 0; border-radius: 9px; }
+#gx-tk .gx-tk-days b { font-family: "JetBrains Mono", Consolas, monospace; font-weight: 600; text-align: right; }
+#gx-tk .gx-tk-days .nd { color: #6d75a8; font-size: 11.5px; white-space: nowrap; }
+#gx-tk .gx-tk-days li.na { opacity: .45; }
+#gx-tk .gx-tk-days li.best { border-color: rgba(94,231,255,.35); background: rgba(94,231,255,.07); box-shadow: 0 0 18px -8px rgba(94,231,255,.7); }
+#gx-tk .gx-tk-days li.best b { color: #9ff0ff; }
+#gx-tk .gx-tk-best { flex: none; margin-top: 10px; align-items: center; gap: 12px; border-radius: 14px;
+  border: 1px solid rgba(94,231,255,.25); background: rgba(94,231,255,.05); }
+#gx-tk .gx-tk-best.na { border-color: rgba(150,170,255,.14); background: rgba(122,162,255,.04); }
+#gx-tk .gx-tk-best .big { font-size: 20px; font-weight: 800; color: #9ff0ff; white-space: nowrap; }
+#gx-tk .gx-tk-best.na .big { color: var(--gx-mut); }
+#gx-tk .gx-tk-best .t { font-size: 11.5px; color: var(--gx-mut); line-height: 1.35; }
+
+/* Verlauf */
+#gx-tk .gx-tk-cw { position: relative; flex: 1; min-height: 0; min-width: 0; }
+#gx-tk .gx-tk-msg { padding: 40px 0; color: var(--gx-mut); font-size: 13px; }
+#gx-tk .gx-tk-src { position: absolute; right: 22px; bottom: 4px; font-size: 10px; color: rgba(154,164,224,.45); letter-spacing: .04em; }
+#gx-tk .gx-tk-ch { overflow: visible; }
+#gx-tk .gx-tk-ch text { font-family: "JetBrains Mono", Consolas, monospace; font-size: 10.5px; fill: #8189bd; }
+#gx-tk .gx-tk-ch text.gx-tk-hint { font-family: inherit; font-size: 12px; font-weight: 700; fill: #6d75a8; }
+#gx-tk .gx-tk-ch .g { stroke: rgba(150,170,255,.1); }
+#gx-tk .gx-tk-ch .avg { stroke: #c58bff; stroke-dasharray: 5 5; stroke-opacity: .7; }
+#gx-tk .gx-tk-ch .thr { stroke: #ffb547; stroke-dasharray: 2 4; stroke-opacity: .55; }
+#gx-tk .gx-tk-ch .thrc { stroke: #ff4d6d; stroke-dasharray: 2 4; stroke-opacity: .55; }
+#gx-tk .gx-tk-ch text.tw { fill: #ffb547; opacity: .8; }
+#gx-tk .gx-tk-ch text.tc { fill: #ff6b84; opacity: .8; }
+#gx-tk .gx-tk-ch .ln { fill: none; stroke-width: 2.2; stroke-linejoin: round; }
+#gx-tk .gx-tk-ch .draw { stroke-dasharray: var(--L); stroke-dashoffset: var(--L); animation: gxTkDraw 1.4s ease-out forwards; }
+#gx-tk .gx-tk-ch .ring { fill: none; stroke-width: 2; transform-box: fill-box; transform-origin: center; animation: gxTkRing 1.8s ease-out infinite; }
+@keyframes gxTkDraw { to { stroke-dashoffset: 0; } }
+@keyframes gxTkRing { from { transform: scale(.6); opacity: .9; } to { transform: scale(2.4); opacity: 0; } }
+#gx-tk .gx-tk-tip { position: absolute; pointer-events: none; display: none; z-index: 5; white-space: nowrap;
+  padding: 6px 9px; border-radius: 10px; font-size: 12px; background: rgba(9,11,34,.95); border: 1px solid var(--gx-line);
+}
+#gx-tk .gx-tk-tip b { font-family: "JetBrains Mono", Consolas, monospace; }
+
+/* schmalere Fenster (wie #gx-wx) */
+@media (max-width: 1180px) {
+  #gx-tk { height: auto; }
+  #gx-tk .gx-tk-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  #gx-tk .gx-tk-hrs { grid-column: 1 / -1; order: 3; margin-top: 16px; padding: 16px 0 0 !important;
+    border-left: 0 !important; border-top: 1px solid rgba(150, 170, 255, .12); }
+}
+@media (max-width: 767px) {
+  #gx-tk { padding: 30px 16px 18px; }
+  #gx-tk .gx-tk-grid { grid-template-columns: minmax(0, 1fr); }
+  #gx-tk .gx-tk-col { padding: 0 !important; border-left: 0 !important; }
+  #gx-tk .gx-tk-col + .gx-tk-col { margin-top: 16px; padding-top: 16px !important; border-top: 1px solid rgba(150, 170, 255, .12); }
+}
+
+/* ==============================================================
+   REITER-WARNUNG (Variante F · Puls + Ringe)
+   #gx-tabs .gx-tab.warn / .crit nach dem Animations-Kanon: Puls gx-wx-pulse-a 2.6 s / gxClPulse 2.2 s am
+   Reiter, Warn-Ringe gx-wx-wr 1.8 s am Icon (Kritisch 2 Ringe, +.6 s),
+   Badge blinkt (gxClBlink, .gx-tab-b.w/.h). Läuft auch im inaktiven Reiter.
+   Tanken: E5 ≥ Ø7T + 4 ct (warn) / + 8 ct (crit).
+   Wetter: Stufe der nächsten 24 h (warn ≥ 4 mm/h od. ≥ 25 mm/Tag,
+   crit Gewitter ≥ 40 % od. ≥ 10 mm/h). Demo: #tkdemo= / #wxdemo=warn|crit
+   ============================================================== */
+#gx-tabs .gx-tab { position: relative; }
+#gx-tabs .gx-tab-i { position: relative; display: grid; place-items: center; }
+#gx-tabs .gx-tab.warn { color: #ffd08a; animation: gx-wx-pulse-a 2.6s ease-in-out infinite; }
+#gx-tabs .gx-tab.crit { color: #ff8fa3; animation: gxClPulse 2.2s ease-in-out infinite; }
+#gx-tabs .gx-tab.on.warn { background: linear-gradient(90deg, rgba(255,181,71,.2), rgba(255,122,217,.1)); }
+#gx-tabs .gx-tab.on.crit { background: linear-gradient(90deg, rgba(255,77,109,.22), rgba(255,138,92,.1)); }
+#gx-tabs .gx-tab.warn .gx-tab-i { color: #ffb547; }
+#gx-tabs .gx-tab.crit .gx-tab-i { color: #ff4d6d; }
+#gx-tabs .gx-tab.warn .gx-tab-i::before,
+#gx-tabs .gx-tab.crit .gx-tab-i::before,
+#gx-tabs .gx-tab.crit .gx-tab-i::after {
+  content: ""; position: absolute; left: 50%; top: 50%; width: 10px; height: 10px; margin: -5px 0 0 -5px;
+  border-radius: 50%; border: 1.5px solid currentColor; opacity: 0; pointer-events: none;
+  animation: gx-wx-wr 1.8s ease-out infinite;
+}
+#gx-tabs .gx-tab.crit .gx-tab-i::after { animation-delay: .6s; }
+
+/* ===== EINHEITLICHE ABSTÄNDE (Variante B · 24 px) =====
+   Uhr → Wetter/Tanken → Suche → Heimnetz → Web: überall 24 px */
+:root { --gx-gap: 24px; --dk-gap: var(--gx-gap); }
+#gx-wx, #gx-tk { margin-top: var(--gx-gap) !important; }
+#gx-tabs { margin-top: calc(var(--gx-gap) - 18px) !important; }   /* Reiter-Leiste bleibt 17px über der Panel-Kante */
+#information-widgets .information-widget-search { margin-top: var(--gx-gap) !important; }
+#layout-groups { margin-top: calc(var(--gx-gap) - 10px) !important; } /* +10px kommen vom Wrapper */
+
+/* ===== TANKPREIS (Variante B · Ziffern-Rolle, Uhr-Stil) ===== */
+#gx-tk .gx-tk-price {
+  --g2: var(--gx-c); --g3: var(--gx-a); --glow: rgba(197, 139, 255, .35);
+  display: inline-flex; align-items: flex-start; vertical-align: top;
+  font-size: 62px; font-weight: 200; letter-spacing: 3px; line-height: 1;
+  background: none !important; -webkit-background-clip: border-box; background-clip: border-box;
+  filter: drop-shadow(0 0 18px var(--glow)); transition: filter .6s;
+}
+#gx-tk.warn .gx-tk-price { --g2: #ffb547; --g3: #ff7ad9; --glow: rgba(255, 181, 71, .38); }
+#gx-tk.crit .gx-tk-price { --g2: #ff4d6d; --g3: #ff8a5c; --glow: rgba(255, 77, 109, .45); }
+#gx-tk .gx-tk-price .gx-tk-ch { height: 1em; overflow: hidden; vertical-align: top; }
+#gx-tk .gx-tk-price .gx-tk-ch.sup { font-size: .48em; margin-left: 3px; margin-top: .06em; letter-spacing: 0; }
+#gx-tk .gx-tk-price .gx-tk-ch.com { opacity: .55; margin: 0 -2px; overflow: visible; }
+#gx-tk .gx-tk-st, #gx-tk .gx-tk-price .gx-tk-ch.com {
+  background: linear-gradient(90deg, #fff, var(--g2), var(--g3), #fff); background-size: var(--bw, 600px) 100%;
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  animation: gx-tk-flow 8s linear infinite;
+}
+#gx-tk .gx-tk-st { display: flex; flex-direction: column; transition: transform 1.1s cubic-bezier(.2, .9, .25, 1.12); }
+#gx-tk .gx-tk-st i { font-style: normal; height: 1em; }
+#gx-tk .gx-tk-pr .gx-tk-unit { vertical-align: bottom; }
+@keyframes gx-tk-flow { from { background-position: calc(0px - var(--ox, 0px)) 0; } to { background-position: calc(var(--bw, 600px) - var(--ox, 0px)) 0; } }
+
+/* ===== TANK-KACHELN (Variante A1 · Wetter-Stil) ===== */
+#gx-tk .gx-tk-tw {
+  display: flex; align-items: center; gap: 10px; min-width: 0;
+  padding: 7px 10px; border-radius: 14px;
+  background: var(--gx-card); border: 1px solid rgba(150, 170, 255, .12);
+  transition: transform .35s cubic-bezier(.2, .8, .2, 1), border-color .35s, background .35s, box-shadow .35s;
+}
+#gx-tk .gx-tk-tw:hover { transform: translateY(-2px); border-color: var(--gx-line-hover); background: var(--gx-card-hover); }
+#gx-tk.gx-tk-in .gx-tk-tw { animation: gx-wx-pop .6s cubic-bezier(.2, .8, .2, 1) both; animation-delay: calc(var(--d) * 60ms + .15s); }
+#gx-tk .gx-tk-tw .gx-wx-ti { transition: box-shadow .4s, color .4s; }
+#gx-tk .gx-tk-tw .gx-wx-tv b { font-family: "JetBrains Mono", Consolas, monospace; font-size: 15px; font-weight: 600; }
+#gx-tk .gx-tk-tw.lo .gx-wx-ti { color: #7fdcff; } #gx-tk .gx-tk-tw.lo b { color: #9ff0ff; }
+#gx-tk .gx-tk-tw.hi .gx-wx-ti { color: #ff9be6; } #gx-tk .gx-tk-tw.hi b { color: #ffc4f0; }
+#gx-tk .gx-tk-tw.av .gx-wx-ti { color: #c58bff; }
+#gx-tk .gx-tk-tw.sp .gx-wx-ti { color: #dfe4ff; }
+.gx-tk-a-dn { animation: gx-tk-dn 2.6s ease-in-out infinite; } @keyframes gx-tk-dn { 50% { transform: translateY(1.6px); } }
+.gx-tk-a-up { animation: gx-tk-up 2.6s ease-in-out infinite; } @keyframes gx-tk-up { 50% { transform: translateY(-1.6px); } }
+.gx-tk-a-dash { stroke-dasharray: 2 2.4; animation: gx-tk-dash 1.6s linear infinite; } @keyframes gx-tk-dash { to { stroke-dashoffset: -8.8; } }
+.gx-tk-a-dot { animation: gx-tk-dot 3.2s ease-in-out infinite; } @keyframes gx-tk-dot { 0%, 100% { transform: translateY(3.2px); } 50% { transform: translateY(-3.2px); } }
+/* Warnung/Kritisch: Hoch-Kachel glüht */
+#gx-tk.warn .gx-tk-tw.hi, #gx-tk.crit .gx-tk-tw.hi { border-color: rgba(255, 190, 110, .45); box-shadow: 0 0 18px rgba(255, 170, 80, .18); }
+#gx-tk.warn .gx-tk-tw.hi .gx-wx-ti, #gx-tk.crit .gx-tk-tw.hi .gx-wx-ti { color: #ffcf8a; box-shadow: inset 0 0 0 1px rgba(255, 190, 110, .5), 0 0 12px rgba(255, 170, 80, .45); }
+#gx-tk.warn .gx-tk-tw.hi b, #gx-tk.crit .gx-tk-tw.hi b { color: #ffd8a8; }
+
+/* ==== TANK-WOCHENTAGE (Wetter-Animation) ==== */
+/* Zeilen gleiten wie im Wetter-7-Tage-Block gestaffelt herein (nur beim Intro/Reiterwechsel, nicht bei jedem Fetch) */
+#gx-tk.gx-tk-in .gx-tk-days li { animation: gx-wx-row .6s cubic-bezier(.2, .8, .2, 1) both; animation-delay: calc(var(--d) * 70ms + .2s); }
+/* Balken: fließender Verlauf + Glow wie .gx-d-bar i, beim Intro wachsen sie von links */
+#gx-tk .gx-tk-days .tr i {
+  background-image: linear-gradient(90deg, #5ee7ff, #c58bff, #ff9be6, #5ee7ff);
+  box-shadow: 0 0 10px rgba(197, 139, 255, .45);
+  transform-origin: left center;
+}
+#gx-tk.gx-tk-in .gx-tk-days .tr i {
+  animation: gx-tk-wflow 7s linear infinite, gx-tk-wgrow .8s cubic-bezier(.2, .8, .2, 1) both;
+  animation-delay: 0s, calc(var(--d) * 70ms + .35s);
+}
+#gx-tk .gx-tk-days li.best .tr i { box-shadow: 0 0 12px rgba(94, 231, 255, .6); }
+@keyframes gx-tk-wflow { to { background-position: var(--p, 300%) 0; } }
+@keyframes gx-tk-wgrow { from { transform: scaleX(0); } }
+
+/* ==============================================================
+   TANK-ABFRAGE-CHIP (Variante A · Lade-Kapsel, ruhig)
+   Ersetzt "sammelt Daten" solange der Verlauf < 24 h ist: Countdown bis
+   zur nächsten Tracker-Abfrage (fetched_at + poll_seconds), sekündlich
+   aus custom.js cdTick(). Bewusst unaufdringlich: langsamer Farbfluss,
+   kein Blinken, kein Tempowechsel. .due = Abfrage läuft (Kapsel voll),
+   .late = überfällig (Füllung aus, nur Text).
+   ============================================================== */
+#gx-tk .gx-tk-chip.cv-a { position: relative; overflow: hidden; isolation: isolate; color: var(--gx-mut); border-color: rgba(150,170,255,.18); }
+#gx-tk .gx-tk-chip .gx-tk-cd { font-style: normal; font-family: "JetBrains Mono", Consolas, monospace; font-weight: 600; font-size: 11.5px;
+  color: #c9d0ff; font-variant-numeric: tabular-nums; min-width: 4ch; }
+@keyframes gx-tk-cflow { to { background-position: -200% 0; } }
+#gx-tk .gx-tk-chip.cv-a .gx-tk-fill { position: absolute; left: 0; top: 0; bottom: 0; width: 0; z-index: -1;
+  background: linear-gradient(90deg, rgba(94,231,255,.07), rgba(197,139,255,.22), rgba(94,231,255,.07)); background-size: 200% 100%;
+  animation: gx-tk-cflow 9s linear infinite; transition: width 1s linear; }
+#gx-tk .gx-tk-chip.cv-a .gx-tk-fill::after { content: ""; position: absolute; right: 0; top: 0; bottom: 0; width: 1px; background: rgba(227,198,255,.45); }
+#gx-tk .gx-tk-chip.cv-a.due .gx-tk-fill::after { display: none; }
+#gx-tk .gx-tk-chip.late .gx-tk-fill, #gx-tk .gx-tk-chip.late .gx-tk-cd { display: none; }
+
+/* ===== WETTER-KOPF (Variante B · Diagramm-Höhe wie Tanken) =====
+   Titel „Wetter · <Ort>“ schwebt oben links über der Jetzt-Spalte,
+   Diagramm + 7 Tage rücken hoch (Diagramm 341 px wie Tanken),
+   „Open-Meteo · Stand“ klein unten rechts wie .gx-tk-src. */
+#gx-wx .gx-wx-head { position: static !important; margin: 0 !important; height: 0; }
+#gx-wx .gx-wx-title { position: absolute; left: 23px; top: 36px; z-index: 2; }
+#gx-wx .gx-wx-upd {
+  position: absolute; right: 22px; bottom: 4px; z-index: 2; opacity: 1;
+  font-size: 10px; letter-spacing: .04em; color: rgba(154, 164, 224, .45);
+}
+#gx-wx .gx-wx-hhead { height: 26px; }
+#gx-wx .gx-wx-now { padding-top: 32px; }
+@media (min-width: 1181px) {
+  #gx-wx {
+    padding-top: 32px !important; padding-bottom: 16px !important;
+    height: 425px; display: flex; flex-direction: column;
+  }
+  #gx-wx .gx-wx-grid { flex: 1; min-height: 0; }
+}
+@media (max-width: 767px) {
+  #gx-wx .gx-wx-title { left: 17px; }
+}
+
+/* ==========================================================================
+   TAG-NACHT (Variante C · Sternennacht) – Wetter-Diagramm: Nacht dunkel mit
+   funkelnden Sternen, Tag mit warmem Licht von oben, keine Uhrzeit-Labels
+   ========================================================================== */
+#gx-wx .gx-wx-night { fill: none; }
+#gx-wx .gx-wx-star { fill: #dfe6ff; opacity: .5; animation: gx-wx-tw var(--d, 3s) var(--l, 0s) ease-in-out infinite; }
+@keyframes gx-wx-tw { 0%, 100% { opacity: .15; } 50% { opacity: .9; } }
+
+/* ==============================================================
+   DECKS-WETTERSTIL (Variante A · Wetter-Zwilling) – Heimnetz | Web
+   Bausteine 1:1 wie das Wetter-Panel: Kerbe auf der Oberkante
+   (custom.js "Zwei-Decks A": .gx-dk-notch > .gx-dk-tab + .gx-dk-b,
+   .gx-dk-meta rechts oben), Kacheln wie .gx-wx-tile (14px Radius,
+   32px-Icon-Mulde), Überschriften wie .gx-wx-sub ohne Icon, Zähler aus
+   h2[data-n], Haarlinien rgba(150,170,255,.12) wie .gx-wx-col.
+   Raster ab 1024px: 1 Kerbe Heimnetz | 2–3 Fotos+Server · Dateien ·
+   Netzwerk · Werkzeuge (je 3 Spalten) | 4 Kerbe Web | 5 Shopping · 3D |
+   6 Gruppe mit Unterspalten | 7 Arbeit · Shop-Check · Videos. Neuer Reiter → Zeile ≤ 7
+   vergeben oder .gx-dk-bg.web weiter spannen.
+   Status: Punkt unten rechts an der Icon-Mulde, offline = Kachel bernstein.
+   Überschreibt KOMMANDOPULT / LINK-RASTER / ZWEI-DECKS H.
+   ============================================================== */
+:root {
+  --dk-hl: rgba(150, 170, 255, .12);
+  --dk-vl: linear-gradient(180deg, transparent, var(--dk-hl) 6%, var(--dk-hl) 94%, transparent) 0 0 / 1px 100% no-repeat;
+  --dk-ht: linear-gradient(90deg, transparent, var(--dk-hl) 5%, var(--dk-hl) 95%, transparent) 22px 0 / calc(100% - 44px) 1px no-repeat;
+  --dk-hb: linear-gradient(90deg, transparent, var(--dk-hl) 5%, var(--dk-hl) 95%, transparent) 22px 100% / calc(100% - 44px) 1px no-repeat;
+  --dk-arrow: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2.2' stroke-linecap='round'><path d='M7 17L17 7M8 7h9v9'/></svg>");
+}
+
+/* ---------- Kerbe + Meta ---------- */
+#layout-groups > .gx-dk-head {
+  display: block !important; height: 34px; padding: 0 !important; margin-bottom: 0;
+  background: none !important; border: 0 !important; z-index: 3; pointer-events: none;
+}
+.gx-dk-notch {
+  position: absolute; left: 22px; top: -18px; display: flex; gap: 6px; padding: 3px;
+  border-radius: 999px; border: 1px solid var(--gx-line); background: rgba(9, 11, 34, .96);
+  box-shadow: 0 6px 24px -10px rgba(0, 0, 0, .8); pointer-events: auto;
+}
+.gx-dk-tab {
+  display: flex; align-items: center; gap: 8px; padding: 6px 13px; border-radius: 999px;
+  font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: #fff;
+  background: linear-gradient(90deg, rgba(122, 162, 255, .22), rgba(197, 139, 255, .22));
+  box-shadow: 0 0 0 1px rgba(197, 139, 255, .35) inset, 0 0 18px -6px rgba(197, 139, 255, .7);
+}
+.gx-dk-tab svg { width: 15px; height: 15px; flex: none; }
+.gx-dk-tab b { font-weight: 700; }
+.gx-dk-b {
+  font-family: "JetBrains Mono", Consolas, monospace; font-size: 11.5px; letter-spacing: 0; text-transform: none;
+  padding: 2px 7px; border-radius: 999px; background: rgba(94, 231, 255, .12); color: #9ff0ff; border: 1px solid rgba(94, 231, 255, .3);
+}
+.gx-dk-b:empty { display: none; }
+.gx-dk-b.v { background: rgba(197, 139, 255, .12); color: #e2d4ff; border-color: rgba(197, 139, 255, .3); }
+.gx-dk-b { transition: background-color .7s ease, color .7s ease, border-color .7s ease, opacity .7s ease; }
+/* STATUS-RUHIG: noch nicht alle Dienste geprüft -> Badge gedimmt, kein Bernstein */
+.gx-dk-b.p { opacity: .5; }
+.gx-dk-b.w { background: rgba(255, 181, 71, .14); color: #ffd08a; border-color: rgba(255, 181, 71, .45); animation: gxClBlink 1.4s ease-in-out infinite; }
+
+/* ---------- Gruppen-Köpfe wie .gx-wx-sub ---------- */
+/* Aufklapp-Panel (Headless UI) clippt sonst Hover-Hub + Glow der Kacheln – nur im offenen Ruhezustand freigeben */
+#layout-groups > :is(.services-group, .bookmark-group) > div[data-open]:not([data-transition]) { overflow: visible !important; }
+#layout-groups > :is(.services-group, .bookmark-group) > button { min-height: 0 !important; padding: 0 !important; margin: 0 0 10px !important; }
+#layout-groups :is(.service-group-icon, .bookmark-group-icon) { display: none !important; }
+#layout-groups :is(.service-group-name, .bookmark-group-name) {
+  display: flex; white-space: nowrap;
+  font-size: 11px !important; letter-spacing: 2.5px; line-height: 16px; color: var(--gx-mut) !important;
+}
+#layout-groups :is(.service-group-name, .bookmark-group-name)[data-n]::after {
+  content: attr(data-n); font-family: "JetBrains Mono", Consolas, monospace; font-size: 10.5px; letter-spacing: 0; opacity: .55;
+}
+#layout-groups :is(.services-list, .bookmark-list)::after { display: none !important; content: none !important; }
+
+/* ---------- Dienst-Kacheln ---------- */
+#layout-groups .services-list { gap: 8px !important; margin: 0 !important; }
+#layout-groups .service-card {
+  border-radius: 14px !important; padding: 7px 10px !important; margin: 0 !important;
+  background: var(--gx-card) !important; border: 1px solid rgba(150, 170, 255, .12) !important; box-shadow: none !important;
+}
+#layout-groups .service-card:hover {
+  transform: translateY(-2px); border-color: var(--gx-line-hover) !important; background: var(--gx-card-hover) !important;
+  box-shadow: 0 8px 26px -10px rgba(197, 139, 255, .55) !important;
+}
+#layout-groups .service-icon {
+  width: 32px !important; height: 32px !important; margin: 0 !important;
+  background: radial-gradient(circle at 35% 30%, rgba(255, 255, 255, .14), rgba(90, 80, 255, .14) 70%) !important;
+  box-shadow: inset 0 0 0 1px rgba(150, 170, 255, .14) !important;
+}
+#layout-groups .service-icon::before, #layout-groups .service-icon::after { display: none !important; }
+#layout-groups .service-icon img, #layout-groups .service-icon > div { width: 19px !important; height: 19px !important; filter: none; }
+#layout-groups .service-card:hover .service-icon img { transform: scale(1.08); filter: drop-shadow(0 0 6px rgba(255, 175, 240, .6)); }
+#layout-groups .service-title-text { padding-right: 22px !important; }
+#layout-groups .service-name { padding: 0 0 0 10px !important; font-size: 14px !important; font-weight: 600; line-height: 1.25; }
+#layout-groups .service-description { margin-top: 1px; font-size: 10.5px !important; font-weight: 400; color: var(--gx-mut) !important; }
+/* Öffnen-Pfeil nur beim Hover */
+#layout-groups .service-title-text::after {
+  width: 16px !important; height: 16px !important; border: 0 !important; right: 0 !important;
+  background: var(--dk-arrow) center / 12px no-repeat !important; opacity: 0; transition: opacity .3s !important;
+}
+#layout-groups .service-card:hover .service-title-text::after { opacity: 1; }
+/* Status-Punkt an der Icon-Mulde (unten rechts) */
+#layout-groups .service-tags { top: calc(50% + 7px) !important; left: 24px !important; right: auto !important; }
+#layout-groups .service-tags .site-monitor-status { padding: 0 !important; }
+#layout-groups .service-tags .rounded-full { width: 9px !important; height: 9px !important; box-shadow: 0 0 0 2px #10123a, 0 0 8px currentColor !important; }
+#layout-groups .service-tags .rounded-full.bg-emerald-500 { background: #4dffb5 !important; color: #4dffb5; }
+/* offline: Kachel bernstein.
+   STATUS-RUHIG: siteMonitor rendert vor der ersten Antwort einen Platzhalter-Punkt
+   (.opacity-20, "Nicht verfügbar"). Schonfrist: bis custom.js nach 4 s
+   body.gx-sm-ready setzt, gilt er als "wird geprüft" (Kachel neutral, Punkt grau).
+   Danach heißt Platzhalter = keine Antwort = offline (z.B. PC aus: die Abfrage
+   hängt dann minutenlang und wird nie rot). Offline = alles außer bg-emerald-500;
+   der Wechsel wird weich überblendet (--gx-off 0→1). */
+@property --gx-off { syntax: "<number>"; inherits: false; initial-value: 0; }
+#layout-groups li.service .service-card {
+  --gx-off: 0;
+  background-image: linear-gradient(90deg, rgba(255, 181, 71, calc(.10 * var(--gx-off))), rgba(255, 181, 71, 0) 60%) !important;
+  transition: transform .35s cubic-bezier(.2, .8, .2, 1), border-color .7s ease, background-color .35s, box-shadow .35s, --gx-off .7s ease !important;
+}
+#layout-groups li.service:has(.site-monitor-status .rounded-full:not(.bg-emerald-500):not(.opacity-20)) .service-card,
+body.gx-sm-ready #layout-groups li.service:has(.site-monitor-status .rounded-full:not(.bg-emerald-500)) .service-card {
+  --gx-off: 1;
+  border-color: rgba(255, 181, 71, .38) !important;
+}
+#layout-groups .service-tags .rounded-full { transition: background-color .7s ease, color .7s ease, box-shadow .7s ease !important; }
+#layout-groups li.service .site-monitor-status .rounded-full.opacity-20 { opacity: 1; }
+body:not(.gx-sm-ready) #layout-groups li.service .site-monitor-status .rounded-full.opacity-20 { background: rgba(170, 182, 255, .32) !important; color: transparent; }
+#layout-groups li.service .site-monitor-status .rounded-full:not(.bg-emerald-500):not(.opacity-20),
+body.gx-sm-ready #layout-groups li.service .site-monitor-status .rounded-full:not(.bg-emerald-500) { background: #ffb547 !important; color: #ffb547; }
+#layout-groups li.service .service-description { transition: color .7s ease; }
+#layout-groups li.service:has(.site-monitor-status .rounded-full:not(.bg-emerald-500):not(.opacity-20)) .service-description,
+body.gx-sm-ready #layout-groups li.service:has(.site-monitor-status .rounded-full:not(.bg-emerald-500)) .service-description { color: #ffd08a !important; }
+
+/* ---------- Link-Kacheln ---------- */
+#layout-groups > .bookmark-group:has(> button [style*="/briefcase-outline.svg"]) { --lk-cols: 3; }
+#layout-groups > .bookmark-group:has(> button [style*="/play-circle-outline.svg"])  { --lk-cols: 1; }
+#layout-groups > .bookmark-group .bookmark-list { margin: 0 !important; gap: 8px !important; }
+#layout-groups > .bookmark-group .bookmark > a {
+  padding: 7px 28px 7px 10px !important; border-radius: 14px !important;
+  background: var(--gx-card) !important; border: 1px solid rgba(150, 170, 255, .12) !important; box-shadow: none !important;
+  transition: transform .35s cubic-bezier(.2, .8, .2, 1), border-color .35s, background .35s, box-shadow .35s !important;
+}
+#layout-groups > .bookmark-group .bookmark > a:hover {
+  transform: translateY(-2px); border-color: var(--gx-line-hover) !important; background: var(--gx-card-hover) !important;
+  box-shadow: 0 8px 26px -10px rgba(197, 139, 255, .55) !important;
+}
+#layout-groups > .bookmark-group .bookmark > a > div { gap: 10px; }
+#layout-groups > .bookmark-group .bookmark-icon {
+  width: 32px !important; height: 32px !important;
+  background: radial-gradient(circle at 35% 30%, rgba(255, 255, 255, .14), rgba(90, 80, 255, .14) 70%) !important;
+  box-shadow: inset 0 0 0 1px rgba(150, 170, 255, .14) !important;
+}
+#layout-groups > .bookmark-group .bookmark-icon::before { display: none !important; }
+#layout-groups > .bookmark-group .bookmark-icon > div, #layout-groups > .bookmark-group .bookmark-icon img { width: 19px !important; height: 19px !important; }
+#layout-groups > .bookmark-group .bookmark > a:hover .bookmark-icon img { transform: scale(1.08); filter: drop-shadow(0 0 6px rgba(255, 175, 240, .6)); }
+#layout-groups > .bookmark-group .bookmark-name { font-size: 14px !important; font-weight: 600; line-height: 1.25; }
+#layout-groups > .bookmark-group .bookmark-description { margin-top: 1px; font-size: 10.5px !important; font-weight: 400; }
+#layout-groups > .bookmark-group .bookmark > a::after,
+#layout-groups > .bookmark-group:is(:has(> button [style*="/shield-check-outline.svg"]), :has(> button [style*="/play-circle-outline.svg"])) .bookmark > a::after {
+  width: 16px !important; height: 16px !important; right: 10px !important; border: 0 !important;
+  background: var(--dk-arrow) center / 12px no-repeat !important; opacity: 0 !important;
+}
+#layout-groups > .bookmark-group .bookmark > a:hover::after,
+#layout-groups > .bookmark-group:is(:has(> button [style*="/shield-check-outline.svg"]), :has(> button [style*="/play-circle-outline.svg"])) .bookmark > a:hover::after { opacity: 1 !important; }
+/* Gruppe mit 4 Unterspalten: Abstände + Haarlinien wie die Deck-Spalten */
+#layout-groups > .bookmark-group:has(> button [style*="/crosshairs-gps.svg"]) .bookmark-list {
+  --tk-gap: 44px; column-gap: var(--tk-gap) !important;
+  background:
+    linear-gradient(180deg, transparent, var(--dk-hl) 15%, var(--dk-hl) 85%, transparent) calc(25% - var(--tk-gap) / 4) 0 / 1px 100% no-repeat,
+    linear-gradient(180deg, transparent, var(--dk-hl) 15%, var(--dk-hl) 85%, transparent) 50% 0 / 1px 100% no-repeat,
+    linear-gradient(180deg, transparent, var(--dk-hl) 15%, var(--dk-hl) 85%, transparent) calc(75% + var(--tk-gap) / 4) 0 / 1px 100% no-repeat !important;
+}
+
+/* ---------- Raster ab 1024px ---------- */
+@media (min-width: 1024px) {
+  #layout-groups > .gx-dk-head.home { grid-row: 1 !important; }
+  #layout-groups > .gx-dk-bg.home   { grid-row: 1 / 4 !important; }
+  #layout-groups > .gx-dk-head.web  { grid-row: 4 !important; }
+  #layout-groups > .gx-dk-bg.web    { grid-row: 4 / 8 !important; }
+
+  #layout-groups > .services-group { padding: 0 22px 20px !important; background: none !important; }
+  #layout-groups > .services-group:nth-child(1) { grid-row: 2 !important;     grid-column: 1 / 4 !important; padding-bottom: 16px !important; }  /* Fotos */
+  #layout-groups > .services-group:nth-child(5) { grid-row: 3 !important;     grid-column: 1 / 4 !important; }                               /* Server */
+  #layout-groups > .services-group:nth-child(2) { grid-row: 2 / 4 !important; grid-column: 4 / 7 !important;   background: var(--dk-vl) !important; } /* Dateien */
+  #layout-groups > .services-group:nth-child(3) { grid-row: 2 / 4 !important; grid-column: 7 / 10 !important;  background: var(--dk-vl) !important; } /* Netzwerk */
+  #layout-groups > .services-group:nth-child(4) { grid-row: 2 / 4 !important; grid-column: 10 / 13 !important; background: var(--dk-vl) !important; } /* Werkzeuge */
+
+  #layout-groups > .bookmark-group { padding: 18px 22px !important; background: none !important; }
+  #layout-groups > .bookmark-group:has(> button [style*="/cart-outline.svg"])     { grid-row: 5 !important; grid-column: 1 / 7 !important;   padding-top: 0 !important; background: none !important; }
+  #layout-groups > .bookmark-group:has(> button [style*="/printer-3d-nozzle.svg"]) { grid-row: 5 !important; grid-column: 7 / 13 !important;  padding-top: 0 !important; background: var(--dk-vl) !important; }
+  #layout-groups > .bookmark-group:has(> button [style*="/crosshairs-gps.svg"])   { grid-row: 6 !important; grid-column: 1 / 13 !important;  padding-bottom: 20px !important; background: var(--dk-ht), var(--dk-hb) !important; }
+  #layout-groups > .bookmark-group:has(> button [style*="/briefcase-outline.svg"])   { grid-row: 7 !important; grid-column: 1 / 7 !important;   padding-bottom: 20px !important; background: none !important; }
+  #layout-groups > .bookmark-group:has(> button [style*="/shield-check-outline.svg"]) { grid-row: 7 !important; grid-column: 7 / 11 !important;  padding-bottom: 20px !important; background: var(--dk-vl) !important; }
+  #layout-groups > .bookmark-group:has(> button [style*="/play-circle-outline.svg"])    { grid-row: 7 !important; grid-column: 11 / 13 !important; padding-bottom: 20px !important; background: var(--dk-vl) !important; }
+}
+/* schmal: Kerbe als Kopfstreifen, Gruppen gestapelt */
+@media (max-width: 1023px) {
+  #layout-groups > .gx-dk-head { height: auto; display: flex !important; justify-content: space-between; gap: 10px; flex-wrap: wrap; padding: 8px 12px !important;
+    background: var(--gx-panel) !important; border: 1px solid var(--gx-line) !important; border-radius: 18px; }
+  .gx-dk-notch, .gx-dk-meta { position: static; }
+  .gx-dk-notch { box-shadow: none; }
+  #layout-groups > :is(.services-group, .bookmark-group) { padding: 12px 6px !important; background: none !important; }
+  #layout-groups { flex-wrap: nowrap !important; }
+  #layout-groups > :is(.services-group, .bookmark-group, .gx-dk-head) { flex: none !important; width: 100%; }
+}
+
+/* ==============================================================
+   KATEGORIE-ICONS (Variante B · Wetter-Wells) – Gruppentitel Heimnetz/Web
+   custom.js "Kategorie-Icons" setzt span.gx-ci (26px Glas-Well wie .gx-wx-ti,
+   Farbe je Kategorie über --ci) vor jeden Titel. Spaltentitel der Unterspalten-Gruppe: Icon
+   statt Farbstrich. Animationen laufen immer (kein prefers-reduced-motion).
+   ============================================================== */
+#layout-groups :is(.service-group-name, .bookmark-group-name).gx-ci-h { align-items: center !important; gap: 10px !important; }
+#layout-groups .gx-ci {
+  width: 26px; height: 26px; flex: none; border-radius: 50%;
+  display: inline-grid; place-items: center; color: var(--ci);
+  background: radial-gradient(circle at 35% 30%, rgba(255, 255, 255, .14), rgba(90, 80, 255, .14) 70%);
+  box-shadow: inset 0 0 0 1px rgba(150, 170, 255, .16), 0 0 14px -4px var(--ci);
+}
+#layout-groups .gx-ci svg { width: 15px; height: 15px; overflow: visible; }
+.gx-ci .ci-iris,.gx-ci .ci-float,.gx-ci .ci-wobble,.gx-ci .ci-roll,.gx-ci .ci-spin,.gx-ci .ci-bob,.gx-ci .ci-scan,.gx-ci .ci-play,.gx-ci .ci-pulse{transform-box:fill-box;transform-origin:center}
+.gx-ci .ci-iris{animation:gx-ci-iris 3.4s ease-in-out infinite}
+@keyframes gx-ci-iris{0%,100%{transform:scale(1)}50%{transform:scale(.78)}}
+.gx-ci .ci-blink{animation:gx-ci-blink 3.4s steps(1) infinite}
+@keyframes gx-ci-blink{0%,88%{opacity:.35}90%,96%{opacity:1}}
+.gx-ci .ci-led1{animation:gx-ci-led 1.6s ease-in-out infinite}.gx-ci .ci-led2{animation:gx-ci-led 1.6s ease-in-out .8s infinite}
+@keyframes gx-ci-led{0%,100%{opacity:1}50%{opacity:.2}}
+.gx-ci .ci-bob{animation:gx-ci-bob 3s ease-in-out infinite}
+@keyframes gx-ci-bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-1.4px)}}
+.gx-ci .ci-draw{stroke-dasharray:1;animation:gx-ci-draw 3.6s ease-in-out infinite}
+@keyframes gx-ci-draw{0%{stroke-dashoffset:1}30%,80%{stroke-dashoffset:0}100%{stroke-dashoffset:-1}}
+.gx-ci .ci-wobble{animation:gx-ci-wob 3.2s ease-in-out infinite}
+@keyframes gx-ci-wob{0%,100%{transform:rotate(0)}25%{transform:rotate(-14deg)}50%{transform:rotate(8deg)}70%{transform:rotate(0)}}
+.gx-ci .ci-roll{animation:gx-ci-roll 3.4s ease-in-out infinite}
+@keyframes gx-ci-roll{0%,100%{transform:translateX(0)}40%{transform:translateX(1.6px)}70%{transform:translateX(-1px)}}
+.gx-ci .ci-float{animation:gx-ci-float 4s ease-in-out infinite}
+@keyframes gx-ci-float{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-1.2px) rotate(6deg)}}
+.gx-ci .ci-spin{animation:gx-ci-spin 9s linear infinite}
+@keyframes gx-ci-spin{to{transform:rotate(360deg)}}
+.gx-ci .ci-pulse{animation:gx-ci-pulse 1.8s ease-in-out infinite}
+@keyframes gx-ci-pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(.55);opacity:.5}}
+.gx-ci .ci-scan{animation:gx-ci-scan 4s ease-in-out infinite}
+@keyframes gx-ci-scan{0%,100%{transform:translate(0,0)}33%{transform:translate(1.2px,-.8px)}66%{transform:translate(-1px,.6px)}}
+.gx-ci .ci-play{animation:gx-ci-play 2.4s ease-in-out infinite}
+@keyframes gx-ci-play{0%,100%{transform:scale(1)}50%{transform:scale(1.18)}}
+.bookmark-group:has(> :where(button) [style*="/crosshairs-gps.svg"]) .bookmark:where(:nth-child(1))::before { background: url("data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23b9a8ff%22%20stroke-width%3D%221.9%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M12%2021s-6-5.6-6-10.5a6%206%200%200%201%2012%200C18%2015.4%2012%2021%2012%2021z%22%2F%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%2210.5%22%20r%3D%222.2%22%2F%3E%3C%2Fsvg%3E") 0 50% / 13px 13px no-repeat !important; padding-left: 19px !important; }
+.bookmark-group:has(> :where(button) [style*="/crosshairs-gps.svg"]) .bookmark:where(:nth-child(3))::before { background: url("data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23b9a8ff%22%20stroke-width%3D%221.9%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M4%208.5h15l-3.2-3.2M20%2015.5H5l3.2%203.2%22%2F%3E%3C%2Fsvg%3E") 0 50% / 13px 13px no-repeat !important; padding-left: 19px !important; }
+.bookmark-group:has(> :where(button) [style*="/crosshairs-gps.svg"]) .bookmark:where(:nth-child(5))::before { background: url("data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23b9a8ff%22%20stroke-width%3D%221.9%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M9.5%209.8c0-3.3%201.1-5.6%202.5-6.8%201.4%201.2%202.5%203.5%202.5%206.8V20.5h-5z%22%2F%3E%3Cpath%20d%3D%22M9.5%2016.6h5%22%2F%3E%3C%2Fsvg%3E") 0 50% / 13px 13px no-repeat !important; padding-left: 19px !important; }
+.bookmark-group:has(> :where(button) [style*="/crosshairs-gps.svg"]) .bookmark:where(:nth-child(7))::before { background: url("data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23b9a8ff%22%20stroke-width%3D%221.9%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M4.5%2015v-3a7.5%207.5%200%200%201%2015%200v3%22%2F%3E%3Crect%20x%3D%223.5%22%20y%3D%2213.5%22%20width%3D%224.2%22%20height%3D%226.8%22%20rx%3D%221.6%22%2F%3E%3Crect%20x%3D%2216.3%22%20y%3D%2213.5%22%20width%3D%224.2%22%20height%3D%226.8%22%20rx%3D%221.6%22%2F%3E%3C%2Fsvg%3E") 0 50% / 13px 13px no-repeat !important; padding-left: 19px !important; }
+
+/* ==============================================================
+   WETTER-RUHIG: Kachel-Pop + 7-Tage-Einflug nur beim Intro
+   (custom.js setzt #gx-wx.gx-wx-play ~2,6 s lang), nicht bei jedem Auffrischen
+   ============================================================== */
+#gx-wx:not(.gx-wx-play) .gx-wx-tile,
+#gx-wx:not(.gx-wx-play) .gx-wx-days li { animation: none; }
+
+/* ===== TANKEN-QUELLE (Variante A · Luft schaffen) =====
+   Best-Zeit-Box im Tanken-Tab berührte die Quellenzeile (Tankerkönig · MTS-K · CC BY 4.0, absolut unten rechts).
+   Box rückt 14 px hoch → ~11 px Luft; Quelle bleibt an der Stelle von „Open-Meteo · Stand“ im Wetter-Tab. */
+#gx-tk .gx-tk-best { margin-bottom: 14px; }
+
+/* ==============================================================
+   HOST-KERBE (Variante H2) – rechte Kerbe am Heimnetz-/Web-Deck
+   custom.js „Host-Kerbe“: .gx-hk (Kapseln .gx-hk-h je Host, Zähler
+   .gx-hk-n, .w = offline), Host-Tag .gx-hk-tag auf Kacheln abseits des
+   Haupt-Hosts, Fokus beim Hover (#layout-groups.gx-hk-focus).
+   Ersetzt den alten Fließtext .gx-dk-meta.
+   ============================================================== */
+.gx-hk {
+  position: absolute; right: 22px; top: -18px; display: flex; gap: 4px; padding: 3px;
+  border-radius: 999px; border: 1px solid var(--gx-line); background: rgba(9, 11, 34, .96);
+  box-shadow: 0 6px 24px -10px rgba(0, 0, 0, .8); pointer-events: auto;
+}
+.gx-hk-h, .gx-hk-x {
+  display: flex; align-items: center; gap: 7px; padding: 6px 8px 6px 11px; border-radius: 999px;
+  font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--gx-mut);
+  white-space: nowrap; cursor: default; transition: color .2s, background .2s, box-shadow .2s;
+}
+.gx-hk-x { padding: 6px 13px; gap: 8px; }
+.gx-hk-h svg, .gx-hk-x svg { width: 15px; height: 15px; flex: none; opacity: .85; }
+.gx-hk-h:hover {
+  color: #fff; background: linear-gradient(90deg, rgba(122, 162, 255, .18), rgba(197, 139, 255, .18));
+  box-shadow: 0 0 0 1px rgba(197, 139, 255, .3) inset;
+}
+.gx-hk-n {
+  font-family: "JetBrains Mono", Consolas, monospace; font-size: 11.5px; letter-spacing: 0; font-weight: 500;
+  padding: 2px 7px; border-radius: 999px; background: rgba(94, 231, 255, .08); color: #9ff0ff; border: 1px solid rgba(94, 231, 255, .22);
+}
+.gx-hk-n.w { background: rgba(255, 181, 71, .14); color: #ffd08a; border-color: rgba(255, 181, 71, .45); animation: gxClBlink 1.4s ease-in-out infinite; }
+
+/* Fokus: Dienste anderer Hosts treten zurück */
+#layout-groups li.service { position: relative; transition: opacity .25s, filter .25s; }
+#layout-groups.gx-hk-focus li.service:not(.gx-hk-hit) { opacity: .22; filter: saturate(.3); }
+#layout-groups.gx-hk-focus li.service.gx-hk-hit .service-card {
+  box-shadow: 0 0 0 1px rgba(159, 240, 255, .45), 0 0 22px -6px rgba(94, 231, 255, .6) !important;
+}
+
+/* Host-Tag auf Kacheln abseits des Haupt-Hosts (weicht beim Hover dem Pfeil) */
+li.service > .gx-hk-tag {
+  position: absolute; right: 12px; top: 7px; z-index: 4; display: flex; align-items: center; gap: 4px;
+  font-family: "JetBrains Mono", Consolas, monospace; font-size: 9.5px; letter-spacing: .02em;
+  padding: 1px 6px 1px 4px; border-radius: 999px; color: #c9d2ff; background: rgba(9, 11, 34, .85);
+  border: 1px solid rgba(150, 170, 255, .28); pointer-events: none; transition: opacity .2s;
+}
+li.service > .gx-hk-tag svg { width: 11px; height: 11px; }
+li.service:hover > .gx-hk-tag { opacity: 0; }
+
+@media (max-width: 1023px) {
+  .gx-hk { position: static; box-shadow: none; flex-wrap: wrap; }
+}
+
+/* ===== WETTER-PLATZHALTER (kein Springen beim Laden) =====
+   Uhr/Datum füllt Homepage erst nach dem ersten Bild, #gx-wx/#gx-tk/#gx-cl
+   kommen per custom.js (~150 ms später). Bis dahin halten Mindesthöhen und
+   unsichtbare Platzhalter die Flächen frei, damit Suche + Heimnetz/Web
+   nicht nach unten springen. */
+@media (min-width: 1181px) {
+  #information-widgets-right > .information-widget-datetime:nth-child(1) { min-height: 92.6px; }
+  #information-widgets-right > .information-widget-datetime:nth-child(2) { min-height: 39px; }
+  #widgets-wrap::after {
+    content: ""; grid-area: deck; height: 425px;
+    margin-top: var(--gx-gap, 24px); pointer-events: none;
+  }
+  #widgets-wrap:has(#gx-wx)::after, #widgets-wrap:has(#gx-tk)::after { display: none; }
+}
+@media (min-width: 1181px) and (max-width: 1400px) {
+  #widgets-wrap::before { content: ""; grid-area: claude; height: 98px; margin: 12px 0; pointer-events: none; }
+  #widgets-wrap:has(#gx-cl)::before { display: none; }
+}
+/* Decks: Kerben-Zeilen (Heimnetz/Web) + Gruppentitel mit 26px-Icon-Well
+   schon vor custom.js in voller Höhe */
+@media (min-width: 1024px) {
+  #layout-groups { grid-template-rows: minmax(34px, auto) auto auto minmax(calc(34px + var(--dk-gap, 24px)), auto); }
+  #layout-groups :is(h2.service-group-name, h2.bookmark-group-name) { min-height: 26px; }
+}
+
+/* ===== TANK-UHRZEIT (Variante A · Tages-Streifen) =====
+   Karte "günstigste Uhrzeit" im Tanken-Panel: 24 Stunden-Zellen, Fenster-Rahmen,
+   Jetzt-Marker, Chip; .in = gerade im Fenster, .w = teure Phase (amber). */
+#gx-tk .gx-tk-best.gx-tk-bs { display: block; padding: 9px 12px 8px; transition: border-color .5s, background .5s, box-shadow .5s; }
+#gx-tk .gx-tk-bs .hd { display: flex; align-items: center; gap: 6px; height: 22px; }
+#gx-tk .gx-tk-bs .hd b { align-self: center; font-family: "JetBrains Mono", Consolas, monospace; font-size: 17px; line-height: 1; color: #9ff0ff; letter-spacing: -.02em; white-space: nowrap; }
+#gx-tk .gx-tk-bs .hd b.na { color: var(--gx-mut); }
+#gx-tk .gx-tk-bs .hd .u { font-size: 11px; font-weight: 600; color: var(--gx-mut); }
+#gx-tk .gx-tk-bs .hd .av { margin-left: 4px; font-size: 11px; color: var(--gx-mut); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+#gx-tk .gx-tk-bsc { align-self: center; margin-left: auto; flex: none; display: inline-flex; align-items: center; gap: 5px; height: 20px; padding: 0 8px; border-radius: 999px;
+  font-size: 10.5px; font-weight: 700; white-space: nowrap; border: 1px solid rgba(150,170,255,.22); background: rgba(10,12,40,.55); color: #cfd5ff; }
+#gx-tk .gx-tk-bs.na .gx-tk-bsc { color: var(--gx-mut); }
+#gx-tk .gx-tk-bsc i { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+#gx-tk .gx-tk-bsc.in { color: #4dffb5; border-color: rgba(77,255,181,.35); background: rgba(77,255,181,.08); }
+#gx-tk .gx-tk-bsc.in i { animation: gx-tk-bsblink 1.8s ease-in-out infinite; }
+#gx-tk .gx-tk-bsc.w { color: #ffb86b; border-color: rgba(255,184,107,.45); background: rgba(255,184,107,.1); }
+#gx-tk .gx-tk-bsc.w i { animation: gx-tk-bsblink 1s steps(2, end) infinite; }
+@keyframes gx-tk-bsblink { 50% { opacity: .25; } }
+#gx-tk .gx-tk-bs .sb { position: relative; display: grid; grid-template-columns: repeat(24, 1fr); gap: 2px; height: 14px; margin: 8px 0 3px; }
+#gx-tk .gx-tk-bs .sb s { border-radius: 3px; background: var(--c, rgba(150,170,255,.16)); opacity: .38; transform-origin: bottom; }
+#gx-tk .gx-tk-bs .sb s.win { opacity: 1; box-shadow: 0 0 8px -1px var(--c); }
+#gx-tk .gx-tk-bs .sb s.nd { opacity: 1; background: rgba(150,170,255,.16); }
+#gx-tk.gx-tk-in .gx-tk-bs .sb s { animation: gx-tk-bsgrow .6s cubic-bezier(.2,.8,.2,1) both; animation-delay: calc(var(--i) * 22ms + .25s); }
+@keyframes gx-tk-bsgrow { from { transform: scaleY(.1); opacity: 0; } }
+#gx-tk .gx-tk-bs .fr { position: absolute; top: -3px; bottom: -3px; left: calc((100% + 2px) * var(--a) / 24 - 3px); width: calc((100% + 2px) * var(--n) / 24 + 2px);
+  border-radius: 5px; border: 1px solid rgba(159,240,255,.7); box-shadow: 0 0 12px -2px rgba(94,231,255,.8); animation: gx-tk-bsglow 3.2s ease-in-out infinite; pointer-events: none; }
+@keyframes gx-tk-bsglow { 50% { box-shadow: 0 0 18px 0 rgba(94,231,255,.55); } }
+#gx-tk .gx-tk-bs .now { position: absolute; top: -6px; bottom: -6px; width: 2px; left: calc((100% + 2px) * var(--f, 0) - 2px); border-radius: 2px;
+  background: #fff; box-shadow: 0 0 8px #fff; transition: left .6s, background .5s; pointer-events: none; }
+#gx-tk .gx-tk-bs .now::before { content: ""; position: absolute; left: -3px; top: -4px; border: 4px solid transparent; border-top-color: #fff; }
+#gx-tk .gx-tk-bs.w .now { background: #ffb86b; box-shadow: 0 0 8px #ffb86b; }
+#gx-tk .gx-tk-bs.w .now::before { border-top-color: #ffb86b; }
+#gx-tk .gx-tk-bs .ax { position: relative; height: 11px; margin-top: 5px; font-family: "JetBrains Mono", Consolas, monospace; font-size: 9px; font-weight: 500; color: #6d75a8; }
+#gx-tk .gx-tk-bs .ax span { position: absolute; transform: translateX(-50%); white-space: nowrap; }
+#gx-tk .gx-tk-bs .ax span.s { transform: none; }
+#gx-tk .gx-tk-bs .ax span.e { transform: translateX(-100%); }
+#gx-tk .gx-tk-bs .ax span.pk { color: #ff9be6; }
+#gx-tk .gx-tk-bs.w { border-color: rgba(255,184,107,.45); background: rgba(255,184,107,.07); box-shadow: 0 0 22px -10px rgba(255,184,107,.8); animation: gx-tk-bswarn 2.6s ease-in-out infinite; }
+@keyframes gx-tk-bswarn { 50% { box-shadow: 0 0 30px -8px rgba(255,184,107,.95); } }
+
+/* ===== WETTER-QUELLE (Variante A · Luft schaffen) =====
+   Letzte 7-Tage-Zeile (bei Auswahl mit Rahmen) lag 3 px unter „Open-Meteo · Stand“.
+   Liste endet 14 px höher -> ~11 px Luft, wie TANKEN-QUELLE; Zeilen bleiben 32 px. */
+#gx-wx .gx-wx-days ul { margin-bottom: 14px; }
+
+/* ==============================================================
+   KATEGORIE-ZEILEN (Variante A) – Heimnetz | Web
+   Jede Kategorie = eine Zeile wie die 7-Tage-Liste: Kopf (Icon-Mulde,
+   Name, Zähler) links in fester Spalte, Kacheln rechts in gleich
+   breiten Spalten (Heimnetz 5, Web 6, Gruppe mit 4 Unterspalten).
+   Zeilen ab 1024px: 1 Kerbe Heimnetz · 2 Fotos · 3 Dateien · 4 Server ·
+   5 Netzwerk · 6 Werkzeuge · 7 Kerbe Web · 8 Shopping · 9 3D · 10 Unterspalten-Gruppe ·
+   11 Arbeit · 12 Shop-Check · 13 Videos. Verankert über das Gruppen-Icon
+   (settings.yaml, layout) – neue Kategorie = neue Zeile hier + Zeilenzahl/Deck-Spanne
+   anpassen. 1024–1599px: Kopf über den Kacheln statt links daneben,
+   unter 1280px Web-Kacheln 4 je Zeile (sonst werden Namen gekürzt).
+   Überschreibt die Platzierung aus DECKS-WETTERSTIL (doppelte ID = stärker).
+   ============================================================== */
+@media (min-width: 1024px) {
+  #layout-groups#layout-groups {
+    --kz-lab: 238px;
+    grid-template-rows: minmax(34px, auto) repeat(5, auto) minmax(calc(34px + var(--dk-gap, 24px)), auto) repeat(6, auto) !important;
+  }
+  #layout-groups#layout-groups > .gx-dk-head.home { grid-row: 1 !important; grid-column: 1 / -1 !important; }
+  #layout-groups#layout-groups > .gx-dk-bg.home   { grid-row: 1 / 7 !important; grid-column: 1 / -1 !important; }
+  #layout-groups#layout-groups > .gx-dk-head.web  { grid-row: 7 !important; grid-column: 1 / -1 !important; }
+  #layout-groups#layout-groups > .gx-dk-bg.web    { grid-row: 7 / 14 !important; grid-column: 1 / -1 !important; }
+
+  /* Zeile: Kopf | Kacheln, Haarlinie oben */
+  #layout-groups#layout-groups > :is(.services-group, .bookmark-group) {
+    grid-column: 1 / -1 !important;
+    display: grid !important; grid-template-columns: var(--kz-lab) minmax(0, 1fr); align-items: center;
+    padding: 9px 22px !important; margin: 0 !important; min-width: 0 !important; width: auto !important; max-width: none !important;
+    background: var(--dk-ht) !important;
+  }
+  #layout-groups#layout-groups > :is(.services-group, .bookmark-group) > button { margin: 0 !important; padding: 0 !important; }
+  #layout-groups#layout-groups > :is(.services-group, .bookmark-group) > div[data-open] { min-width: 0; }
+
+  /* Kacheln in gleich breiten Spalten */
+  #layout-groups#layout-groups :is(.services-list, .bookmark-list) {
+    display: grid !important; grid-template-columns: repeat(var(--kz-c), minmax(0, 1fr)) !important;
+    grid-template-rows: none !important; grid-auto-flow: row !important; gap: 8px !important; margin: 0 !important; padding: 0 !important;
+  }
+  #layout-groups#layout-groups > .services-group { --kz-c: 5; }
+  #layout-groups#layout-groups > .bookmark-group { --kz-c: 6; }
+  #layout-groups#layout-groups li:is(.service, .bookmark) { margin: 0 !important; min-width: 0 !important; }
+  #layout-groups#layout-groups li.bookmark > a { margin: 0 !important; padding-right: 10px !important; }
+
+  /* Host-Tag (z.B. Server / Mini-PC) unten rechts, damit er den Namen in den schmaleren Kacheln nicht verdeckt */
+  #layout-groups#layout-groups li.service > .gx-hk-tag { top: auto; bottom: 8px; }
+  #layout-groups#layout-groups li.service:has(> .gx-hk-tag) .service-description { padding-right: 54px; }
+
+  /* Reihenfolge */
+  #layout-groups#layout-groups > .services-group:has(> button [style*="/image-multiple.svg"])       { grid-row: 2 !important; background: none !important; padding-top: 16px !important; }
+  #layout-groups#layout-groups > .services-group:has(> button [style*="/folder-file.svg"])    { grid-row: 3 !important; }
+  #layout-groups#layout-groups > .services-group:has(> button [style*="/monitor.svg"])       { grid-row: 4 !important; }
+  #layout-groups#layout-groups > .services-group:has(> button [style*="/network.svg"]) { grid-row: 5 !important; }
+  #layout-groups#layout-groups > .services-group:has(> button [style*="/wrench.svg"])     { grid-row: 6 !important; padding-bottom: 20px !important; }
+  #layout-groups#layout-groups > .bookmark-group:has(> button [style*="/cart-outline.svg"])       { grid-row: 8 !important; background: none !important; padding-top: 16px !important; }
+  #layout-groups#layout-groups > .bookmark-group:has(> button [style*="/printer-3d-nozzle.svg"])   { grid-row: 9 !important; }
+  #layout-groups#layout-groups > .bookmark-group:has(> button [style*="/crosshairs-gps.svg"])     { grid-row: 10 !important; }
+  #layout-groups#layout-groups > .bookmark-group:has(> button [style*="/briefcase-outline.svg"])     { grid-row: 11 !important; }
+  #layout-groups#layout-groups > .bookmark-group:has(> button [style*="/shield-check-outline.svg"])   { grid-row: 12 !important; }
+  #layout-groups#layout-groups > .bookmark-group:has(> button [style*="/play-circle-outline.svg"])      { grid-row: 13 !important; padding-bottom: 20px !important; }
+
+  /* Gruppe mit 4 Unterspalten (Titel), Kopf oben bündig */
+  #layout-groups#layout-groups > .bookmark-group:has(> button [style*="/crosshairs-gps.svg"]) { align-items: start; }
+  #layout-groups#layout-groups > .bookmark-group:has(> button [style*="/crosshairs-gps.svg"]) > button { padding-top: 24px !important; }
+  #layout-groups#layout-groups > .bookmark-group:has(> button [style*="/crosshairs-gps.svg"]) .bookmark-list {
+    --tk-gap: 24px; grid-template-columns: repeat(4, minmax(0, 1fr)) !important; grid-template-rows: auto auto !important;
+    grid-auto-flow: column !important; column-gap: var(--tk-gap) !important; row-gap: 8px !important; padding-top: 20px !important;
+  }
+}
+/* mittlere Breite: Kopf über den Kacheln */
+@media (min-width: 1024px) and (max-width: 1599px) {
+  #layout-groups#layout-groups > :is(.services-group, .bookmark-group) { grid-template-columns: minmax(0, 1fr); padding-top: 14px !important; }
+  #layout-groups#layout-groups > :is(.services-group, .bookmark-group) > button { margin: 0 0 9px !important; }
+  #layout-groups#layout-groups > .bookmark-group:has(> button [style*="/crosshairs-gps.svg"]) > button { padding-top: 0 !important; }
+}
+@media (min-width: 1024px) and (max-width: 1279px) {
+  #layout-groups#layout-groups > .bookmark-group { --kz-c: 4; }
+}
+
+/* ==============================================================
+   MÜLL-PANEL (Variante A · Zeitleiste) – dritter Reiter „Müll“ neben
+   Wetter | Tanken (custom.js Block „Müll-Panel“). Hülle 1:1 wie #gx-tk
+   (übernommen), Inhalt: Nächste Abfuhr + 4 Tonnen-Kacheln | Zeitleiste
+   5 Wochen | Terminliste. Tonnenfarben Rest #c3c9f0, Bio #e0a878,
+   Papier #7fb7ff, Gelb #ffe27a; Schadstoff gedämpft.
+   Zustände: .warn = Abfuhr übermorgen (2 Tage vorher), .crit = Abfuhr
+   morgen oder heute (bis 10 Uhr); Quellen-Hinweis nur als Kasten.
+   Demo: #mudemo=warn|crit|note
+   ============================================================== */
+html[data-gx-tab="mu"] #gx-wx { display: none !important; }
+html:not([data-gx-tab="mu"]) #gx-mu { display: none !important; }
+#gx-mu { margin-top: var(--gx-gap) !important; }
+/* ---------- Hülle wie Tanken ---------- */
+#gx-mu {
+  grid-area: deck; position: relative; overflow: hidden;
+  padding: 32px 22px 16px;
+  display: flex; flex-direction: column; height: var(--mu-h, 425px); min-height: 425px;
+  background: var(--gx-panel); border: 1px solid var(--gx-line); border-radius: 22px;
+  -webkit-backdrop-filter: blur(16px) saturate(1.4); backdrop-filter: blur(16px) saturate(1.4);
+  box-shadow: 0 10px 50px rgba(40, 30, 140, .22), inset 0 1px 0 rgba(255, 255, 255, .07);
+  animation: gx-wx-in .7s cubic-bezier(.2, .8, .2, 1) both; transition: border-color .4s;
+}
+#gx-mu::before {
+  content: ""; position: absolute; left: 22px; right: 22px; top: 0; height: 1px; opacity: .8;
+  background: linear-gradient(90deg, transparent, #7aa2ff, #c58bff, #ff9be6, transparent);
+}
+#gx-mu.warn { border-color: rgba(255,181,71,.5); animation: gx-wx-in .7s cubic-bezier(.2,.8,.2,1) both, gx-wx-pulse-a 2.6s ease-in-out infinite;
+  background: radial-gradient(ellipse 40% 90% at 0% 50%, rgba(255,181,71,.13), transparent 70%), var(--gx-panel); }
+#gx-mu.crit { border-color: rgba(255,77,109,.58); animation: gx-wx-in .7s cubic-bezier(.2,.8,.2,1) both, gxClPulse 2.2s ease-in-out infinite;
+  background: radial-gradient(ellipse 40% 90% at 0% 50%, rgba(255,77,109,.17), transparent 70%), var(--gx-panel); }
+#gx-mu.warn::before { background: linear-gradient(90deg, transparent, #ffb547, #ff7ad9, transparent); }
+#gx-mu.crit::before { background: linear-gradient(90deg, transparent, #ff4d6d, #ff8a5c, transparent); }
+#gx-mu .gx-tk-grid { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.75fr) minmax(0, 1fr); }
+#gx-mu .gx-tk-col { min-width: 0; min-height: 0; display: flex; flex-direction: column; padding: 0 22px; }
+#gx-mu .gx-tk-col:first-child { padding-left: 0; }
+#gx-mu .gx-tk-col:last-child { padding-right: 0; }
+#gx-mu .gx-tk-col + .gx-tk-col { border-left: 1px solid rgba(150, 170, 255, .12); }
+#gx-mu .gx-tk-now { gap: 11px; }
+#gx-mu .gx-tk-top { display: flex; align-items: center; gap: 10px; min-width: 0; }
+#gx-mu .gx-tk-ico { flex: none; width: 34px; height: 34px; border-radius: 10px; border: 1px solid var(--gx-line); display: grid; place-items: center;
+  background: rgba(122,162,255,.08); color: #b9a8ff; }
+#gx-mu .gx-tk-ttl { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+#gx-mu .gx-tk-ttl b { font-size: 13px; font-weight: 800; letter-spacing: .2em; white-space: nowrap; }
+#gx-mu .gx-tk-ttl > span { font-size: 12px; color: var(--gx-mut); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#gx-mu .gx-tk-ttl i { font-style: normal; color: #4dffb5; }
+#gx-mu .gx-tk-ttl i.cl { color: #ff6b84; }
+#gx-mu .gx-tk-ttl .old { color: #ffb547; }
+#gx-mu .gx-tk-chip { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 999px;
+  border: 1px solid var(--gx-line); white-space: nowrap; }
+#gx-mu .gx-tk-chip.ok { color: #9ff0ff; border-color: rgba(94,231,255,.3); }
+#gx-mu .gx-tk-chip.ok i { width: 7px; height: 7px; border-radius: 50%; background: #4dffb5; box-shadow: 0 0 8px #4dffb5; }
+#gx-mu .gx-tk-chip.w { color: #ffb547; border-color: rgba(255,181,71,.45); background: rgba(255,181,71,.08); animation: gxClBlink 1.4s ease-in-out infinite; }
+#gx-mu .gx-tk-chip.h { color: #ff6b84; border-color: rgba(255,77,109,.55); background: rgba(255,77,109,.12); animation: gxClBlink 1.1s ease-in-out infinite; }
+#gx-mu .gx-tk-tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+#gx-mu .gx-tk-hh { display: flex; align-items: center; gap: 10px; height: 28px; margin-bottom: 6px; flex: none; }
+#gx-mu .gx-tk-cap { font-size: 10.5px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; color: var(--gx-mut); white-space: nowrap; }
+#gx-mu .gx-tk-cap b { color: var(--gx-tx); font-weight: 800; }
+#gx-mu .gx-tk-seg { display: flex; padding: 3px; border: 1px solid var(--gx-line); border-radius: 999px; background: rgba(5,6,26,.5); }
+#gx-mu .gx-tk-seg button { all: unset; cursor: pointer; font-size: 12px; font-weight: 700; padding: 4px 12px; border-radius: 999px; color: var(--gx-mut); }
+#gx-mu .gx-tk-seg button.on { color: #fff; background: linear-gradient(90deg, rgba(122,162,255,.4), rgba(197,139,255,.4)); }
+#gx-mu .gx-tk-cw { position: relative; flex: 1; min-height: 0; min-width: 0; }
+#gx-mu .gx-tk-msg { padding: 40px 0; color: var(--gx-mut); font-size: 13px; }
+#gx-mu .gx-tk-src { position: absolute; right: 22px; bottom: 4px; font-size: 10px; color: rgba(154,164,224,.45); letter-spacing: .04em; }
+@media (max-width: 1180px) {
+#gx-mu { height: auto; }
+#gx-mu .gx-tk-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+}
+@media (max-width: 767px) {
+#gx-mu { padding: 30px 16px 18px; }
+#gx-mu .gx-tk-grid { grid-template-columns: minmax(0, 1fr); }
+#gx-mu .gx-tk-col { padding: 0 !important; border-left: 0 !important; }
+#gx-mu .gx-tk-col + .gx-tk-col { margin-top: 16px; padding-top: 16px !important; border-top: 1px solid rgba(150, 170, 255, .12); }
+}
+/* ---------- Müll-eigene Teile ---------- */
+#gx-mu { --rest: #c3c9f0; --bio: #e0a878; --papier: #7fb7ff; --gelb: #ffe27a; --schad: #9aa4e0; }
+#gx-mu .k-rest { --c: var(--rest); } #gx-mu .k-bio { --c: var(--bio); } #gx-mu .k-papier { --c: var(--papier); }
+#gx-mu .k-gelb { --c: var(--gelb); } #gx-mu .k-schad { --c: var(--schad); }
+#gx-mu .gx-mu-msg { margin: auto; color: var(--gx-mut); font-size: 13px; }
+#gx-mu .gx-tk-ttl .old { color: #ffb547; }
+#gx-mu .gx-mu-hero { display: flex; align-items: baseline; gap: 10px; margin-top: 2px; white-space: nowrap; }
+#gx-mu .gx-mu-big {
+  --g2: var(--gx-c); --g3: var(--gx-a); --glow: rgba(197, 139, 255, .35);
+  font-size: 54px; font-weight: 200; letter-spacing: 1px; line-height: 1;
+  background: linear-gradient(90deg, #fff, var(--g2), var(--g3), #fff); background-size: 300% 100%;
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  animation: gx-flow 8s linear infinite; filter: drop-shadow(0 0 18px var(--glow));
+}
+#gx-mu.warn .gx-mu-big { --g2: #ffb547; --g3: #ffd08a; --glow: rgba(255, 181, 71, .38); }
+#gx-mu.crit .gx-mu-big { --g2: #ff4d6d; --g3: #ff8a5c; --glow: rgba(255, 77, 109, .45); }
+#gx-mu .gx-mu-big small { font-size: .42em; font-weight: 300; margin-left: 6px; }
+#gx-mu .gx-mu-when { font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: -4px; }
+#gx-mu .gx-mu-when .d { color: var(--gx-mut); font-weight: 600; }
+#gx-mu .gx-mu-dot { display: inline-flex; align-items: center; gap: 5px; font-weight: 700; color: var(--c); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+#gx-mu .gx-mu-dot::before { content: ""; flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--c); box-shadow: 0 0 8px var(--c); }
+#gx-mu .gx-tk-chip { align-self: flex-start; }
+
+/* Tonnen-Kacheln (gx-wx-tile) */
+#gx-mu .gx-mu-tw .gx-wx-ti { color: var(--c); position: relative; }
+#gx-mu .gx-mu-tw .gx-wx-tv b { font-size: 14px; font-weight: 700; }
+#gx-mu .gx-mu-tw.due { border-color: color-mix(in srgb, var(--c) 45%, transparent); background: color-mix(in srgb, var(--c) 9%, var(--gx-card)); }
+#gx-mu.gx-mu-in .gx-mu-tw { animation: gx-wx-pop .6s cubic-bezier(.2, .8, .2, 1) both; animation-delay: calc(var(--d) * 60ms + .15s); }
+#gx-mu .gx-mu-lid { transform-box: fill-box; transform-origin: 0% 100%; animation: gx-mu-lid 3.4s ease-in-out infinite; }
+@keyframes gx-mu-lid { 0%, 70%, 100% { transform: rotate(0); } 80% { transform: rotate(-16deg); } 90% { transform: rotate(-4deg); } }
+/* Warn-Ringe (Animations-Kanon: gx-wx-wr, Kritisch 2 Ringe) an Kachel-Icon + nächstem Zeitleisten-Punkt */
+#gx-mu.warn .gx-mu-tw.due .gx-wx-ti::before, #gx-mu.crit .gx-mu-tw.due .gx-wx-ti::before, #gx-mu.crit .gx-mu-tw.due .gx-wx-ti::after,
+#gx-mu.warn .gx-mu-rg::before, #gx-mu.crit .gx-mu-rg::before, #gx-mu.crit .gx-mu-rg::after {
+  content: ""; position: absolute; left: 50%; top: 50%; width: 10px; height: 10px; margin: -5px 0 0 -5px; border-radius: 50%;
+  border: 1.5px solid #ffb547; animation: gx-wx-wr 1.8s ease-out infinite; pointer-events: none;
+}
+#gx-mu.crit .gx-mu-tw.due .gx-wx-ti::before, #gx-mu.crit .gx-mu-tw.due .gx-wx-ti::after, #gx-mu.crit .gx-mu-rg::before, #gx-mu.crit .gx-mu-rg::after { border-color: #ff4d6d; }
+#gx-mu.crit .gx-mu-tw.due .gx-wx-ti::after, #gx-mu.crit .gx-mu-rg::after { animation-delay: .6s; }
+#gx-mu .gx-mu-rg { position: absolute; left: 50%; top: 50%; width: 0; height: 0; }
+
+/* Quellen-Hinweis (Störungsmeldung des Entsorgers) */
+#gx-mu .gx-mu-note { display: flex; gap: 9px; align-items: flex-start; padding: 7px 11px; border-radius: 14px; font-size: 11.5px; line-height: 1.35;
+  color: #ffd08a; border: 1px solid rgba(255, 181, 71, .38); background: rgba(255, 181, 71, .07); }
+#gx-mu .gx-mu-note b { color: #ffb547; font-weight: 800; letter-spacing: .04em; }
+#gx-mu .gx-mu-note i { font-style: normal; animation: gxClBlink 1.4s ease-in-out infinite; }
+#gx-mu .gx-mu-note span { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; color: rgba(255, 214, 150, .8); }
+
+/* Terminliste (wie „Wochentage“) */
+#gx-mu .gx-mu-list { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 5px; margin: 0; padding: 0; list-style: none; overflow: hidden; }
+#gx-mu .gx-mu-list li { flex: none; display: grid; grid-template-columns: 74px minmax(0, 1fr) auto; align-items: center; gap: 10px; height: 31px; padding: 0 10px;
+  border-radius: 10px; border: 1px solid transparent; font-size: 13px; transition: background .3s; }
+#gx-mu.gx-mu-in .gx-mu-list li { animation: gx-wx-row .6s cubic-bezier(.2, .8, .2, 1) both; animation-delay: calc(var(--d) * 70ms + .2s); }
+#gx-mu .gx-mu-list li:hover { background: rgba(120, 110, 255, .13); }
+#gx-mu .gx-mu-list .n { font-weight: 700; white-space: nowrap; }
+#gx-mu .gx-mu-list .n small { color: var(--gx-mut); font-weight: 500; margin-left: 4px; }
+#gx-mu .gx-mu-list .cd { font-family: "JetBrains Mono", Consolas, monospace; font-weight: 600; font-size: 12px; color: var(--gx-mut); text-align: right; white-space: nowrap; }
+#gx-mu .gx-mu-list li.nx { border-color: color-mix(in srgb, var(--c) 40%, transparent); background: color-mix(in srgb, var(--c) 8%, transparent); }
+#gx-mu .gx-mu-list li.nx .n { color: var(--gx-c); }
+#gx-mu .gx-mu-list li.nx .cd { color: var(--c); }
+#gx-mu.warn .gx-mu-list li.nx { border-color: rgba(255, 181, 71, .5); background: rgba(255, 181, 71, .08); }
+#gx-mu.warn .gx-mu-list li.nx .cd { color: #ffd08a; animation: gxClBlink 1.4s ease-in-out infinite; }
+#gx-mu.crit .gx-mu-list li.nx { border-color: rgba(255, 77, 109, .55); background: rgba(255, 77, 109, .1); }
+#gx-mu.crit .gx-mu-list li.nx .cd { color: #ff8fa3; animation: gxClBlink 1.1s ease-in-out infinite; }
+#gx-mu .gx-mu-list li.sz { opacity: .5; font-size: 12px; }
+#gx-mu .gx-mu-list li.sz .gx-mu-dot { color: var(--gx-mut); font-weight: 600; }
+#gx-mu .gx-mu-list li.sz .gx-mu-dot::before { content: "☣"; width: auto; height: auto; background: none; box-shadow: none; font-size: 12px; }
+
+/* Zeitleiste: 4 Tonnen-Spuren + gedämpfte Schadstoff-Spur, Achse mit KW */
+#gx-mu .gx-mu-tl { --nx: 0%; flex: 1; min-height: 0; position: relative; display: grid; grid-template-columns: 76px minmax(0, 1fr);
+  grid-template-rows: 20px repeat(4, 1fr) 30px 22px; }
+#gx-mu .gx-mu-ln { display: flex; align-items: center; gap: 7px; font-size: 11.5px; font-weight: 700; color: var(--c); white-space: nowrap; }
+#gx-mu .gx-mu-ln.sz { color: var(--gx-mut); font-weight: 600; opacity: .6; }
+#gx-mu .gx-mu-ln .w { width: 24px; height: 24px; flex: none; border-radius: 50%; display: grid; place-items: center;
+  background: radial-gradient(circle at 35% 30%, rgba(255, 255, 255, .14), rgba(90, 80, 255, .14) 70%); box-shadow: inset 0 0 0 1px rgba(150, 170, 255, .14); }
+#gx-mu .gx-mu-ln .w svg { width: 15px; height: 15px; overflow: visible; }
+#gx-mu .gx-mu-tr { position: relative; }
+#gx-mu .gx-mu-tr::before { content: ""; position: absolute; left: 0; right: 0; top: 50%; height: 1px;
+  background: linear-gradient(90deg, color-mix(in srgb, var(--c) 35%, transparent), color-mix(in srgb, var(--c) 10%, transparent)); }
+#gx-mu .gx-mu-tr.sz::before { background: repeating-linear-gradient(90deg, rgba(150, 170, 255, .16) 0 4px, transparent 4px 8px); }
+#gx-mu .gx-mu-pt { position: absolute; top: 50%; width: 12px; height: 12px; margin: -6px 0 0 -6px; border-radius: 50%; background: var(--c);
+  box-shadow: 0 0 10px var(--c), 0 0 0 3px color-mix(in srgb, var(--c) 18%, transparent); }
+#gx-mu.gx-mu-in .gx-mu-pt { animation: gx-wx-pop .5s cubic-bezier(.2, .8, .2, 1) both; animation-delay: calc(var(--d) * 40ms + .2s); }
+#gx-mu .gx-mu-pt.past { opacity: .3; box-shadow: none; }
+#gx-mu .gx-mu-pt.nx { width: 16px; height: 16px; margin: -8px 0 0 -8px; }
+#gx-mu .gx-mu-pt b { position: absolute; left: 50%; bottom: 15px; transform: translateX(-50%); font-family: "JetBrains Mono", Consolas, monospace;
+  font-size: 10.5px; font-weight: 600; color: var(--c); white-space: nowrap; }
+#gx-mu .gx-mu-pt.sz { width: 8px; height: 8px; margin: -4px 0 0 -4px; background: none; border: 1.5px solid var(--gx-mut); box-shadow: none; opacity: .55;
+  transform: rotate(45deg); border-radius: 1px; }
+#gx-mu .gx-mu-pt.sz b { transform: translateX(-50%) rotate(-45deg); color: var(--gx-mut); bottom: 11px; }
+#gx-mu .gx-mu-ax { grid-column: 2; position: relative; border-top: 1px solid rgba(150, 170, 255, .12); }
+#gx-mu .gx-mu-ax span { position: absolute; top: 6px; transform: translateX(-50%); font-family: "JetBrains Mono", Consolas, monospace; font-size: 10.5px; color: #8189bd; white-space: nowrap; }
+#gx-mu .gx-mu-ax span i { font-style: normal; color: #5c6496; margin-left: 4px; }
+#gx-mu .gx-mu-bg { position: absolute; left: 76px; right: 0; top: 20px; bottom: 52px; pointer-events: none; }
+#gx-mu .gx-mu-bg .wk { position: absolute; top: 0; bottom: 0; background: rgba(150, 170, 255, .035); }
+#gx-mu .gx-mu-bg .vl { position: absolute; top: 0; bottom: 0; width: 1px; background: rgba(150, 170, 255, .08); }
+#gx-mu .gx-mu-now { position: absolute; left: var(--nx); top: -14px; bottom: -4px; width: 2px; margin-left: -1px;
+  background: linear-gradient(180deg, #ff9be6, rgba(197, 139, 255, .15)); box-shadow: 0 0 10px rgba(255, 155, 230, .6); transition: left 1s; }
+#gx-mu .gx-mu-now b { position: absolute; top: -4px; left: 6px; font-size: 10px; font-weight: 800; letter-spacing: .14em; color: #ff9be6; text-transform: uppercase; }
+#gx-mu.warn .gx-mu-now { background: linear-gradient(180deg, #ffb547, rgba(255, 181, 71, .12)); box-shadow: 0 0 10px rgba(255, 181, 71, .6); }
+#gx-mu.warn .gx-mu-now b { color: #ffb547; }
+#gx-mu.crit .gx-mu-now { background: linear-gradient(180deg, #ff4d6d, rgba(255, 77, 109, .12)); box-shadow: 0 0 10px rgba(255, 77, 109, .6); }
+#gx-mu.crit .gx-mu-now b { color: #ff6b84; }
+@media (max-width: 1180px) {
+  #gx-mu .gx-mu-mid { grid-column: 1 / -1; order: 3; margin-top: 16px; padding: 16px 0 0 !important; border-left: 0 !important;
+    border-top: 1px solid rgba(150, 170, 255, .12); min-height: 280px; padding-bottom: 16px !important; }
+}
+
+/* ===== TANKEN-PROGNOSE (Variante A · Countdown-Ring) =====
+   Konzept "Jetzt tanken oder warten?": Empfehlungs-Box mit Ring + Chips, Prognose im Verlauf
+   (gestrichelt, Spanne, Zone "gut genug", Sprung-/Gut-ab-Marker), Legende, Trend-Chip.
+   Stufen: .l0 grün / .l1 amber (warten) / .l2 rot (Spitze). custom.js: Tanken-Panel. */
+#gx-tk .gx-tk-now { gap: 9px; }
+#gx-tk .gx-tkp-vd { --c: #4dffb5; --r: 77, 255, 181; display: flex; align-items: center; gap: 11px; padding: 8px 12px 8px 9px; border-radius: 14px;
+  border: 1px solid rgba(var(--r), .4); background: linear-gradient(90deg, rgba(var(--r), .12), rgba(var(--r), .03)); box-shadow: 0 0 22px -12px rgba(var(--r), .9); }
+#gx-tk .gx-tkp-vd.l1 { --c: #ffb547; --r: 255, 181, 71; }
+#gx-tk .gx-tkp-vd.l2 { --c: #ff6b84; --r: 255, 107, 132; }
+#gx-tk .gx-tkp-vd.nd { --c: #8f9bff; --r: 150, 170, 255; box-shadow: none; }
+#gx-tk .gx-tkp-vd .rg { flex: none; position: relative; width: 38px; height: 38px; }
+#gx-tk .gx-tkp-vd.l2 .rg { animation: gxClBlink 1.4s ease-in-out infinite; }
+#gx-tk .gx-tkp-vd .rg svg { position: absolute; inset: 0; transform: rotate(-90deg); }
+#gx-tk .gx-tkp-vd .rg circle { fill: none; stroke-width: 3; }
+#gx-tk .gx-tkp-vd .rg .bg { stroke: rgba(150, 170, 255, .15); }
+#gx-tk .gx-tkp-vd .rg .fg { stroke: var(--c); stroke-linecap: round; filter: drop-shadow(0 0 4px var(--c)); transition: stroke-dasharray .8s cubic-bezier(.2, .8, .2, 1); }
+#gx-tk.gx-tk-in .gx-tkp-vd .rg .fg { animation: gx-tkp-rg 1.1s cubic-bezier(.2, .8, .2, 1) both .2s; }
+@keyframes gx-tkp-rg { from { stroke-dasharray: 0 101; } }
+#gx-tk .gx-tkp-vd .tm { position: absolute; inset: 0; display: grid; place-items: center; font: 700 9.5px "JetBrains Mono", Consolas, monospace; color: var(--c); }
+#gx-tk .gx-tkp-vd .tx { min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+#gx-tk .gx-tkp-vd b { font-size: 15px; font-weight: 800; color: #eef0ff; white-space: nowrap; letter-spacing: .01em; }
+#gx-tk .gx-tkp-vd .cs { display: flex; gap: 5px; min-width: 0; }
+#gx-tk .gx-tkp-c { display: inline-flex; align-items: center; height: 20px; padding: 0 8px; border-radius: 999px; font-size: 10.5px; font-weight: 700; white-space: nowrap;
+  border: 1px solid rgba(150, 170, 255, .25); background: rgba(10, 12, 40, .5); color: #cfd5ff; }
+#gx-tk .gx-tkp-c.g { border-color: rgba(77, 255, 181, .4); background: rgba(77, 255, 181, .1); color: #4dffb5; }
+#gx-tk .gx-tkp-c.r { border-color: rgba(255, 107, 132, .45); background: rgba(255, 107, 132, .1); color: #ff8fa3; animation: gxClBlink 1.4s ease-in-out infinite; }
+#gx-tk .gx-tk-tw.gx-tkp-odd { border-color: rgba(255, 181, 71, .45); box-shadow: 0 0 18px -8px rgba(255, 181, 71, .8); }
+#gx-tk .gx-tk-tw.gx-tkp-odd em { color: #ffc773; }
+#gx-tk .gx-tkp-ch .gx-tkp-gz { fill: rgba(77, 255, 181, .07); stroke: rgba(77, 255, 181, .22); stroke-dasharray: 3 4; }
+#gx-tk .gx-tkp-ch .gx-tkp-band { fill: rgba(160, 150, 255, .14); stroke: none; }
+#gx-tk .gx-tkp-ch .gx-tkp-fc { fill: none; stroke-width: 2; stroke-dasharray: 5 5; opacity: .9; animation: gx-tkp-dash 1.6s linear infinite; }
+@keyframes gx-tkp-dash { to { stroke-dashoffset: -20; } }
+#gx-tk .gx-tkp-ch .gx-tkp-act { fill: none; stroke: rgba(230, 234, 255, .55); stroke-width: 1.2; }
+#gx-tk .gx-tkp-ch .gx-tkp-nowl { stroke: rgba(255, 255, 255, .35); stroke-dasharray: 2 3; }
+#gx-tk .gx-tkp-ch text.gx-tkp-lab { fill: rgba(200, 206, 255, .55); font-size: 9.5px; letter-spacing: .08em; }
+#gx-tk .gx-tkp-ch .gx-tkp-jp line { stroke: rgba(255, 155, 230, .45); stroke-dasharray: 2 3; }
+#gx-tk .gx-tkp-ch .gx-tkp-jp text { fill: #ff9be6; font-size: 10.5px; font-weight: 700; }
+#gx-tk .gx-tkp-ch .gx-tkp-gd line { stroke: rgba(77, 255, 181, .6); stroke-dasharray: 2 3; }
+#gx-tk .gx-tkp-ch .gx-tkp-gd circle { fill: #4dffb5; filter: drop-shadow(0 0 5px #4dffb5); }
+#gx-tk .gx-tkp-ch .gx-tkp-gd text { fill: #7dffc9; font-size: 11px; font-weight: 700; }
+#gx-tk .gx-tk-tip small { opacity: .7; }
+#gx-tk .gx-tkp-leg { display: flex; align-items: center; gap: 5px; font-size: 10px; color: var(--gx-mut); white-space: nowrap; }
+#gx-tk .gx-tkp-leg i { display: inline-block; width: 14px; height: 0; margin-left: 6px; border-top: 2px solid #8fb4ff; }
+#gx-tk .gx-tkp-leg i.b { border-top-style: dashed; }
+#gx-tk .gx-tkp-leg i.c { height: 8px; border: 0; background: rgba(160, 150, 255, .3); border-radius: 2px; }
+#gx-tk .gx-tkp-leg i.d { border-top: 1px solid rgba(230, 234, 255, .6); }
+#gx-tk .gx-tkp-leg i.e { height: 8px; border: 1px dashed rgba(77, 255, 181, .45); background: rgba(77, 255, 181, .12); border-radius: 2px; }
+#gx-tk .gx-tkp-trc { font-family: "JetBrains Mono", Consolas, monospace; font-size: 11px; color: #ffd08a; white-space: nowrap; }
+#gx-tk .gx-tkp-demo { color: #ffd08a; }
+
+/* ===== QUELLENANGABEN (Links in den Quellenzeilen) =====
+   Wetter („Open-Meteo · Stand“), Luft und Tanken („Quelle“): Links sehen aus wie der umgebende Text
+   (Farbe/Größe geerbt, keine Unterstreichung), beim Überfahren unterstrichen. Die Zeilen liegen absolut unten
+   rechts im Panel; pointer-events nur für das <a> eingeschaltet, falls ein Elternelement sie sperrt. */
+#gx-wx .gx-wx-upd a, #gx-tk .gx-tk-src a, #gx-lu .gx-tk-src a {
+  color: inherit; font: inherit; letter-spacing: inherit; text-decoration: none; cursor: pointer; pointer-events: auto;
+}
+#gx-wx .gx-wx-upd a:hover, #gx-tk .gx-tk-src a:hover, #gx-lu .gx-tk-src a:hover,
+#gx-wx .gx-wx-upd a:focus-visible, #gx-tk .gx-tk-src a:focus-visible, #gx-lu .gx-tk-src a:focus-visible {
+  text-decoration: underline; text-underline-offset: 2px;
+}
+
+/* ==============================================================
+   HANDY-ANSICHT (Variante B) – greift NUR bis 700px (Kontingent-Panel bis 1023px).
+   PC/Ultrawide (>= 701px) unverändert. Reiter volle Breite (Icon +
+   Wert), Unterspalten-Gruppe mit 2 Spalten, umbrechenden Namen, Diagramm-Uhrzeiten
+   ohne „Uhr“ (custom.js: <tspan class="gx-u">), Kontingent-Label eigene Zeile.
+   ============================================================== */
+@media (max-width: 700px) {
+  /* 1 · Reiter-Leiste */
+  #gx-wx, #gx-tk, #gx-mu { padding-top: 50px !important; }
+  #gx-wx .gx-wx-title { top: 54px !important; }
+  #gx-wx .gx-wx-now { padding-top: 30px !important; }
+  #gx-tabs { justify-self: stretch; margin: 0 12px !important; margin-top: calc(var(--gx-gap) - 18px) !important; gap: 4px; }
+  #gx-tabs .gx-tab { flex: 1 1 0; justify-content: center; font-size: 0; gap: 7px; padding: 6px 4px; }
+  #gx-tabs .gx-tab .gx-tab-b { font-size: 11.5px; white-space: nowrap; }
+
+  /* 2 · Unterspalten-Gruppe: Namen umbrechen statt abschneiden, ohne Beschreibung */
+  #layout-groups .bookmark-group:has(> button [style*="/crosshairs-gps.svg"]) .bookmark-list { column-gap: 20px !important; }
+  .bookmark-group:has(> button [style*="/crosshairs-gps.svg"]) .bookmark-text { overflow: visible !important; white-space: normal !important; }
+  .bookmark-group:has(> button [style*="/crosshairs-gps.svg"]) .bookmark-name { white-space: normal !important; overflow: visible !important; text-overflow: clip !important; font-size: 13px !important; line-height: 1.2 !important; }
+  .bookmark-group:has(> button [style*="/crosshairs-gps.svg"]) .bookmark-description { display: none !important; }
+
+  /* 3 · Wetter-Diagramm: nur Zahlen an der Zeitachse */
+  #gx-wx .gx-wx-h .gx-u { display: none; }
+
+  /* 7 · Tanken: „Verlauf + Prognose“ vor „Tagestiefs · 7 Tage“ (inkl. Karte
+     günstigste Uhrzeit); <1180 setzt .gx-tk-hrs sonst per order:3 ans Ende */
+  #gx-tk .gx-tk-hrs { order: 1; }
+  #gx-tk .gx-tk-wk { order: 2; }
+
+  /* 6 · Tanken-Sprung (A3 Zündschnur): sehr schmale Handys (360 px) nur Countdown, ohne „12:00“ */
+  @media (max-width: 375px) {
+    #gx-tk .gx-tk-jp .gx-tk-jr > span:first-child { display: none; }
+  }
+}
+/* 4 · Kontingent-Panel (bis 1023px, Tablet/Handy quer/schmales Fenster): Kopf
+   „KI-Kontingent“ eigene Zeile, darunter Sitzung + Woche gleich breit
+   (vorher: Sitzung neben dem Kopf, Woche allein darunter);
+   Label eigene Zeile, Chip + Reset darunter */
+@media (max-width: 1023px) {
+  #gx-cl .gx-cl-brand { flex-basis: 100%; }
+  #gx-cl .gx-cl-row:first-child { flex-wrap: wrap !important; row-gap: 4px !important; }
+  #gx-cl .gx-cl-row:first-child > .gx-cl-lbl { flex: 1 0 100% !important; overflow: visible !important; }
+  #gx-cl .gx-cl-row:first-child > .gx-cl-reset { margin-left: auto; }
+
+  /* 5 · Tanken-Prognose: Legende eigene Zeile, Quelle unter dem Diagramm */
+  #gx-tk .gx-tk-hh { flex-wrap: wrap; row-gap: 6px; }
+  #gx-tk .gx-tk-hh > .gx-tkp-leg { flex: 1 0 100%; flex-wrap: wrap; row-gap: 4px; }
+  #gx-tk .gx-tk-hh > .gx-tkp-leg > i:first-child { margin-left: 0; }
+  #gx-tk .gx-tk-src { position: static !important; display: block; margin-top: 10px; text-align: right; line-height: 1.4; }
+}
+/* 6 · Luft-Panel (4. Reiter): Reiter enger, Spuren ohne Icon, Legende umbrechen
+   (LUFT-PANEL steht in der Datei danach → Panel-Regeln hier mit !important) */
+@media (max-width: 700px) {
+  #gx-lu { padding-top: 50px !important; }
+  #gx-tabs .gx-tab { gap: 4px; padding: 6px 2px; min-width: 0; }
+  #gx-tabs .gx-tab .gx-tab-b { font-size: 10.5px; padding-left: 5px; padding-right: 5px; }
+  #gx-lu .gx-lu-mid { --lx: 62px !important; }
+  #gx-lu .gx-lu-li { display: none !important; }
+  #gx-lu .gx-lu-lb { grid-template-columns: 1fr !important; }
+  #gx-lu .gx-lu-mid { --cg: 2px !important; }
+  #gx-lu .gx-lu-cells i { border-radius: 3px !important; }
+  #gx-lu .gx-lu-leg { flex-wrap: wrap !important; row-gap: 6px; }
+  #gx-lu .gx-lu-leg .k { margin-left: 0 !important; flex-basis: 100%; }
+  #gx-lu .gx-lu-long { display: none !important; }
+  #gx-lu .gx-lu-dl { font-size: 9px !important; padding: 1px 4px !important; }
+  #gx-lu .gx-lu-days li { gap: 6px !important; padding: 0 8px !important; }
+  #gx-lu .gx-lu-ps { gap: 3px !important; }
+  #gx-lu .gx-lu-p { min-width: 0 !important; padding: 3px 4px !important; gap: 2px !important; }
+  #gx-lu .gx-tk-src { position: static !important; display: block; margin-top: 10px; text-align: right; }
+}
+
+/* 7 · Müll-Update (Schadstoffplan): Chip unter die Zeitleisten-Überschrift, Update-Symbol kleiner
+   (MÜLL-UPDATE steht in der Datei danach → Regeln hier mit !important) */
+@media (max-width: 700px) {
+  #gx-mu .gx-mu-mid > .gx-tk-hh { flex-wrap: wrap !important; height: auto !important; row-gap: 6px; }
+  #gx-mu .gx-mu-up { margin-left: 0 !important; max-width: 100%; }
+  /* Reiter sind gleich breit (flex 1 1 0): Symbol als Eck-Badge auf den Reiter-Rand, braucht keine Breite */
+  #gx-tabs .gx-tab-u { position: absolute !important; top: -6px; right: -2px; width: 16px !important; height: 16px !important; margin: 0 !important;
+    background: linear-gradient(rgba(26,178,255,.2), rgba(26,178,255,.2)), #090b22 !important; z-index: 1; }
+  #gx-tabs .gx-tab-u svg { width: 10px !important; height: 10px !important; }
+}
+
+/* 8 · Leistung (Ruckeln beim Scrollen): Matt statt Blur – der animierte Hintergrund zwang
+   die Unschärfe in jedem Bild neu; Animationen in Panels außer Sicht pausieren (.gx-oos aus
+   custom.js „Handy-Leistung“). Netzdichte/30 Bilder/s: custom.js Hintergrund-Block. */
+@media (max-width: 700px) {
+  body *, body *::before, body *::after { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
+  #information-widgets .widget-container, #information-widgets .information-widget-search,
+  #gx-wx, #gx-tk, #gx-mu, #gx-lu { background-color: rgba(13, 15, 44, .66) !important; }
+  .gx-oos, .gx-oos::before, .gx-oos::after,
+  .gx-oos *:not(.gx-bkA):not(.gx-bkA *), .gx-oos *::before, .gx-oos *::after { animation-play-state: paused !important; }
+}
+
+/* ==============================================================
+   HANDY-DECKRAHMEN – Heimnetz-/Web-Rahmen auch bis 700px.
+   <1024 sind .gx-dk-bg aus (Flex-Spalte); der Rahmen entsteht hier
+   aus Segmenten: Kopf = Oberkante, Gruppen = Seiten, letzte Gruppe
+   je Deck = Unterkante. Unabhängig von der Anzahl der Gruppen.
+   ============================================================== */
+@media (max-width: 700px) {
+  #layout-groups > .gx-dk-head,
+  #layout-groups > .services-group,
+  #layout-groups > .bookmark-group {
+    background: rgba(13, 15, 44, .66) !important;
+    -webkit-backdrop-filter: none !important; backdrop-filter: none !important;
+    border: 1px solid var(--gx-line) !important; border-top: 0 !important; border-bottom: 0 !important;
+    border-radius: 0 !important; box-shadow: none !important;
+    padding-left: 10px !important; padding-right: 10px !important;
+  }
+  /* Oberkante = Kopfzeile (Lichtkante wie am PC) */
+  #layout-groups > .gx-dk-head {
+    position: relative;
+    border-top: 1px solid var(--gx-line) !important;
+    border-radius: 22px 22px 0 0 !important;
+    margin-bottom: 0 !important; padding-top: 12px !important; padding-bottom: 6px !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .07) !important;
+  }
+  #layout-groups > .gx-dk-head.home { margin-top: 8px !important; }
+  #layout-groups > .gx-dk-head.web  { margin-top: var(--gx-gap, 24px) !important; }
+  #layout-groups > .gx-dk-head::before {
+    content: ""; position: absolute; left: 24px; right: 24px; top: -1px; height: 1px; pointer-events: none;
+    background: linear-gradient(90deg, transparent, #7aa2ff 30%, #c58bff 70%, transparent); opacity: .9;
+  }
+  #layout-groups > .gx-dk-head.web::before { background: linear-gradient(90deg, transparent, #c58bff 30%, #ff9be6 70%, transparent); }
+  /* Unterkante = letzte Gruppe des Decks */
+  #layout-groups > .services-group:not(:has(~ .services-group)),
+  #layout-groups > .bookmark-group:not(:has(~ .bookmark-group)) {
+    border-bottom: 1px solid var(--gx-line) !important;
+    border-radius: 0 0 22px 22px !important;
+    padding-bottom: 14px !important;
+  }
+  /* Unterspalten-Gruppe (2 Spalten): nur die mittlere Trennlinie – die 4-Spalten-Linien
+     vom PC lagen sonst als Geisterlinien in den Kacheln; kein Leerraum unten */
+  #layout-groups > .bookmark-group:has(> button [style*="/crosshairs-gps.svg"]) .bookmark-list {
+    background: linear-gradient(180deg, transparent, var(--dk-hl) 10%, var(--dk-hl) 90%, transparent) 50% 0 / 1px 100% no-repeat !important;
+  }
+  #layout-groups > .bookmark-group:has(> :where(button) [style*="/crosshairs-gps.svg"]) .bookmark:where(:nth-child(4)) { margin-bottom: 0 !important; }
+}
+
+/* =====================================================================
+   TANK-SPRUNG (Variante A3 · Zündschnur, Leiste B1 · Tagestief-Balken)
+   Sprung-Kachel: Betrag groß, darunter Uhrzeit + Sekunden-Countdown (jpTick).
+   Leiste beginnt rechts vom Icon (Textspalte: 10px Polster + 32px Icon + 10px
+   Abstand), Stil + Fluss wie die Tagestief-Balken (7 s), kein Funke.
+   < 3 h amber, < 30 min rot.
+   ===================================================================== */
+#gx-tk .gx-tk-tw.gx-tk-jp { position: relative; overflow: hidden;
+  --ja: #5ee7ff; --jb: #c58bff; --jc: #ff9be6; --jg: rgba(197, 139, 255, .45); }
+#gx-tk .gx-tk-jp .gx-wx-tv { min-width: 0; flex: 1; }
+#gx-tk .gx-tk-jp .gx-tk-jr { display: flex; justify-content: space-between; gap: 3px; margin-bottom: 4px; }
+#gx-tk .gx-tk-jp .gx-tk-jc { font-family: "JetBrains Mono", Consolas, monospace; font-variant-numeric: tabular-nums; letter-spacing: -.07em; color: #ffc4f0; white-space: nowrap; }
+#gx-tk .gx-tk-jp .gx-tk-fz { position: absolute; left: 52px; right: 10px; bottom: 5px; height: 3px; border-radius: 9px; background: rgba(150, 170, 255, .1); }
+#gx-tk .gx-tk-jp .gx-tk-fz i { display: block; height: 100%; border-radius: 9px; transition: width 1s linear;
+  background-image: linear-gradient(90deg, var(--ja), var(--jb), var(--jc), var(--ja)); background-size: 300% 100%;
+  box-shadow: 0 0 8px var(--jg); animation: gx-tk-jflow 7s linear infinite; }
+@keyframes gx-tk-jflow { to { background-position: -300% 0; } }
+/* < 3 h: amber */
+#gx-tk .gx-tk-tw.gx-tk-jp.gx-tk-j1 { --ja: #ffb547; --jb: #ffcf8a; --jc: #ffb547; --jg: rgba(255, 181, 71, .45);
+  border-color: rgba(255, 190, 110, .5); box-shadow: 0 0 18px rgba(255, 170, 80, .2); }
+#gx-tk .gx-tk-tw.gx-tk-jp.gx-tk-j1 .gx-wx-ti { color: #ffcf8a; box-shadow: inset 0 0 0 1px rgba(255, 190, 110, .5), 0 0 12px rgba(255, 170, 80, .45); }
+#gx-tk .gx-tk-tw.gx-tk-jp.gx-tk-j1 b, #gx-tk .gx-tk-jp.gx-tk-j1 .gx-tk-jc { color: #ffd8a8; }
+/* < 30 min: rot */
+#gx-tk .gx-tk-tw.gx-tk-jp.gx-tk-j2 { --ja: #ff6f91; --jb: #ffb3c4; --jc: #ff6f91; --jg: rgba(255, 111, 145, .5);
+  border-color: rgba(255, 120, 150, .6); box-shadow: 0 0 20px rgba(255, 90, 130, .28); background: rgba(80, 20, 50, .35); }
+#gx-tk .gx-tk-tw.gx-tk-jp.gx-tk-j2 .gx-wx-ti { color: #ff8fa8; box-shadow: inset 0 0 0 1px rgba(255, 120, 150, .6), 0 0 14px rgba(255, 90, 130, .55); }
+#gx-tk .gx-tk-tw.gx-tk-jp.gx-tk-j2 b, #gx-tk .gx-tk-jp.gx-tk-j2 .gx-tk-jc { color: #ffb3c4; }
+/* ==============================================================
+   LUFT-PANEL (Variante A · Spuren) – vierter Reiter „Luft“ nach Müll
+   (custom.js Block „Luft-Panel“). Hülle 1:1 wie #gx-mu (übernommen).
+   Inhalt: Antworten Lüften / UV-Ort + 4 Kacheln | 4 Stunden-Spuren
+   nächste 24 h (Gräser, Roggen, Luft-Index, UV) mit Rahmen Lüftfenster / UV ≥ 3 |
+   nächste 4 Tage. Daten: Open-Meteo Air Quality (CAMS Europa) + DWD
+   Pollenflug-Gefahrenindex Roggen (/dwd/s31fg.json).
+   Schwellen: Gräser mäßig ≥ 10, stark > 30 Pollen/m³ · Luft-Index
+   Warnung ≥ 60, kritisch ≥ 80 · UV Warnung ≥ 3, kritisch ≥ 6 ·
+   Roggen Warnung 2 / 2–3, kritisch 3.
+   .warn/.crit = höchste Stufe der aktuellen Stunde. Demo: #ludemo=warn|crit
+   ============================================================== */
+html[data-gx-tab="lu"] #gx-wx { display: none !important; }
+html:not([data-gx-tab="lu"]) #gx-lu { display: none !important; }
+#gx-lu { margin-top: var(--gx-gap) !important; }
+/* ---------- Hülle wie Tanken/Müll ---------- */
+#gx-lu {
+  grid-area: deck; position: relative; overflow: hidden;
+  padding: 32px 22px 16px;
+  display: flex; flex-direction: column; height: var(--lu-h, 425px); min-height: 425px;
+  background: var(--gx-panel); border: 1px solid var(--gx-line); border-radius: 22px;
+  -webkit-backdrop-filter: blur(16px) saturate(1.4); backdrop-filter: blur(16px) saturate(1.4);
+  box-shadow: 0 10px 50px rgba(40, 30, 140, .22), inset 0 1px 0 rgba(255, 255, 255, .07);
+  animation: gx-wx-in .7s cubic-bezier(.2, .8, .2, 1) both; transition: border-color .4s;
+}
+#gx-lu::before {
+  content: ""; position: absolute; left: 22px; right: 22px; top: 0; height: 1px; opacity: .8;
+  background: linear-gradient(90deg, transparent, #7aa2ff, #c58bff, #ff9be6, transparent);
+}
+#gx-lu.warn { border-color: rgba(255,181,71,.5); animation: gx-wx-in .7s cubic-bezier(.2,.8,.2,1) both, gx-wx-pulse-a 2.6s ease-in-out infinite;
+  background: radial-gradient(ellipse 40% 90% at 0% 50%, rgba(255,181,71,.13), transparent 70%), var(--gx-panel); }
+#gx-lu.crit { border-color: rgba(255,77,109,.58); animation: gx-wx-in .7s cubic-bezier(.2,.8,.2,1) both, gxClPulse 2.2s ease-in-out infinite;
+  background: radial-gradient(ellipse 40% 90% at 0% 50%, rgba(255,77,109,.17), transparent 70%), var(--gx-panel); }
+#gx-lu.warn::before { background: linear-gradient(90deg, transparent, #ffb547, #ff7ad9, transparent); }
+#gx-lu.crit::before { background: linear-gradient(90deg, transparent, #ff4d6d, #ff8a5c, transparent); }
+#gx-lu .gx-tk-grid { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.75fr) minmax(0, 1fr); }
+#gx-lu .gx-tk-col { min-width: 0; min-height: 0; display: flex; flex-direction: column; padding: 0 22px; }
+#gx-lu .gx-tk-col:first-child { padding-left: 0; }
+#gx-lu .gx-tk-col:last-child { padding-right: 0; }
+#gx-lu .gx-tk-col + .gx-tk-col { border-left: 1px solid rgba(150, 170, 255, .12); }
+#gx-lu .gx-tk-now { gap: 11px; }
+#gx-lu .gx-tk-top { display: flex; align-items: center; gap: 10px; min-width: 0; }
+#gx-lu .gx-tk-ico { flex: none; width: 34px; height: 34px; border-radius: 10px; border: 1px solid var(--gx-line); display: grid; place-items: center;
+  background: rgba(122,162,255,.08); color: #b9a8ff; }
+#gx-lu .gx-tk-ttl { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+#gx-lu .gx-tk-ttl b { font-size: 13px; font-weight: 800; letter-spacing: .2em; white-space: nowrap; }
+#gx-lu .gx-tk-ttl > span { font-size: 12px; color: var(--gx-mut); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#gx-lu .gx-tk-ttl i { font-style: normal; color: #4dffb5; }
+#gx-lu .gx-tk-ttl i.cl { color: #ff6b84; }
+#gx-lu .gx-tk-ttl .old { color: #ffb547; }
+#gx-lu .gx-tk-chip { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 999px;
+  border: 1px solid var(--gx-line); white-space: nowrap; }
+#gx-lu .gx-tk-chip.ok { color: #9ff0ff; border-color: rgba(94,231,255,.3); }
+#gx-lu .gx-tk-chip.ok i { width: 7px; height: 7px; border-radius: 50%; background: #4dffb5; box-shadow: 0 0 8px #4dffb5; }
+#gx-lu .gx-tk-chip.w { color: #ffb547; border-color: rgba(255,181,71,.45); background: rgba(255,181,71,.08); animation: gxClBlink 1.4s ease-in-out infinite; }
+#gx-lu .gx-tk-chip.h { color: #ff6b84; border-color: rgba(255,77,109,.55); background: rgba(255,77,109,.12); animation: gxClBlink 1.1s ease-in-out infinite; }
+#gx-lu .gx-tk-tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+#gx-lu .gx-tk-hh { display: flex; align-items: center; gap: 10px; height: 28px; margin-bottom: 6px; flex: none; }
+#gx-lu .gx-tk-cap { font-size: 10.5px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; color: var(--gx-mut); white-space: nowrap; }
+#gx-lu .gx-tk-cap b { color: var(--gx-tx); font-weight: 800; }
+#gx-lu .gx-tk-seg { display: flex; padding: 3px; border: 1px solid var(--gx-line); border-radius: 999px; background: rgba(5,6,26,.5); }
+#gx-lu .gx-tk-seg button { all: unset; cursor: pointer; font-size: 12px; font-weight: 700; padding: 4px 12px; border-radius: 999px; color: var(--gx-mut); }
+#gx-lu .gx-tk-seg button.on { color: #fff; background: linear-gradient(90deg, rgba(122,162,255,.4), rgba(197,139,255,.4)); }
+#gx-lu .gx-tk-cw { position: relative; flex: 1; min-height: 0; min-width: 0; }
+#gx-lu .gx-tk-msg { padding: 40px 0; color: var(--gx-mut); font-size: 13px; }
+#gx-lu .gx-tk-src { position: absolute; right: 22px; bottom: 4px; font-size: 10px; color: rgba(154,164,224,.45); letter-spacing: .04em; }
+@media (max-width: 1180px) {
+#gx-lu { height: auto; }
+#gx-lu .gx-tk-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+}
+@media (max-width: 767px) {
+#gx-lu { padding: 30px 16px 18px; }
+#gx-lu .gx-tk-grid { grid-template-columns: minmax(0, 1fr); }
+#gx-lu .gx-tk-col { padding: 0 !important; border-left: 0 !important; }
+#gx-lu .gx-tk-col + .gx-tk-col { margin-top: 16px; padding-top: 16px !important; border-top: 1px solid rgba(150, 170, 255, .12); }
+}
+/* ---------- Luft-eigene Teile ---------- */
+#gx-lu .gx-lu-msg { margin: auto; color: var(--gx-mut); font-size: 13px; }
+#gx-lu .gx-tk-ttl .old { color: #ffb547; white-space: nowrap; }
+/* Kopfzeile darf umbrechen, damit Hinweise („⚠ veraltet“, „⚠ DWD nicht erreichbar“) nicht abgeschnitten werden */
+#gx-lu .gx-tk-ttl > span { white-space: normal; }
+/* Antworten Lüften / UV-Ort */
+#gx-lu .gx-lu-vd { display: flex; gap: 11px; align-items: center; padding: 8px 10px; margin-top: 8px; border-radius: 14px;
+  border: 1px solid rgba(150, 170, 255, .14); background: rgba(122, 162, 255, .05); }
+#gx-lu .gx-lu-vi { flex: none; width: 36px; height: 36px; border-radius: 11px; display: grid; place-items: center; color: #9ff0ff;
+  background: rgba(94, 231, 255, .08); border: 1px solid rgba(94, 231, 255, .22); }
+#gx-lu .gx-lu-vd em { display: block; font: 600 10px/1.2 "JetBrains Mono", Consolas, monospace; letter-spacing: 1.5px; text-transform: uppercase; color: #7f88b8; font-style: normal; }
+#gx-lu .gx-lu-vd b { display: block; font-size: 19px; font-weight: 300; color: #e7ebff; line-height: 1.2; white-space: nowrap; }
+#gx-lu .gx-lu-vd small { display: block; font-size: 11.5px; color: #9aa3cf; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#gx-lu .gx-lu-vd.l1 { border-color: rgba(255, 181, 71, .45); background: rgba(255, 181, 71, .07); }
+#gx-lu .gx-lu-vd.l1 .gx-lu-vi { color: #ffb547; border-color: rgba(255, 181, 71, .45); background: rgba(255, 181, 71, .1); }
+#gx-lu .gx-lu-vd.l1 b { color: #ffd08a; animation: gxClBlink 1.4s ease-in-out infinite; }
+#gx-lu .gx-lu-vd.l2 { border-color: rgba(255, 77, 109, .55); background: rgba(255, 77, 109, .09); }
+#gx-lu .gx-lu-vd.l2 .gx-lu-vi { color: #ff6b84; border-color: rgba(255, 77, 109, .55); background: rgba(255, 77, 109, .12); }
+#gx-lu .gx-lu-vd.l2 b { color: #ff8fa3; animation: gxClBlink 1.1s ease-in-out infinite; }
+#gx-lu.gx-lu-in .gx-lu-vd { animation: gx-wx-pop .6s cubic-bezier(.2, .8, .2, 1) both; animation-delay: .1s; }
+/* Kacheln (gx-wx-tile) */
+#gx-lu .gx-tk-now .gx-tk-tiles { margin-top: 10px; }
+#gx-lu .gx-lu-t .gx-wx-ti { color: var(--c); }
+#gx-lu .gx-lu-t .gx-wx-tv b { font-size: 14px; font-weight: 700; }
+#gx-lu .gx-lu-t .gx-wx-tv b small { font-size: 10px; font-weight: 500; color: #7f88b8; margin-left: 2px; }
+#gx-lu .gx-lu-t.l1 .gx-wx-tv b { color: #ffd08a; }
+#gx-lu .gx-lu-t.l2 .gx-wx-tv b { color: #ff8fa3; }
+#gx-lu.gx-lu-in .gx-lu-t { animation: gx-wx-pop .6s cubic-bezier(.2, .8, .2, 1) both; animation-delay: calc(var(--d) * 60ms + .15s); }
+/* Stunden-Spuren */
+#gx-lu .gx-lu-mid { --lx: 118px; --cg: 3px; }
+#gx-lu .gx-lu-lanes { position: relative; display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
+#gx-lu .gx-lu-ln { display: flex; align-items: center; height: 44px; }
+#gx-lu .gx-lu-lb { width: var(--lx); flex: none; display: grid; grid-template-columns: 28px 1fr; column-gap: 8px; align-items: center; }
+#gx-lu .gx-lu-li { grid-row: 1 / 3; width: 28px; height: 28px; border-radius: 9px; display: grid; place-items: center; color: #9fb0e8;
+  background: rgba(122, 162, 255, .07); border: 1px solid rgba(150, 170, 255, .16); }
+#gx-lu .gx-lu-lb b { font-size: 13px; font-weight: 600; color: #cfd5ff; }
+#gx-lu .gx-lu-lb em { font: 600 12px/1 "JetBrains Mono", Consolas, monospace; font-style: normal; color: #9ff0ff; }
+#gx-lu .gx-lu-lb em.l1 { color: #ffd08a; }
+#gx-lu .gx-lu-lb em.l2 { color: #ff8fa3; }
+#gx-lu .gx-lu-cells { flex: 1; display: grid; grid-template-columns: repeat(24, 1fr); gap: var(--cg); height: 100%; }
+#gx-lu .gx-lu-cells i { border-radius: 5px; background: rgba(127, 220, 255, calc(var(--o) * .55)); transform-origin: bottom; }
+#gx-lu .gx-lu-cells i.l1 { background: rgba(255, 181, 71, var(--o)); }
+#gx-lu .gx-lu-cells i.l2 { background: rgba(255, 77, 109, var(--o)); }
+#gx-lu .gx-lu-cells i.nd { background: repeating-linear-gradient(135deg, rgba(150, 170, 255, .1) 0 3px, transparent 3px 6px); }
+/* Roggen-Spur (DWD, Tagesstufe 0–3) */
+#gx-lu .gx-lu-ln.rg .gx-lu-li { color: #e8c46a; }
+#gx-lu .gx-lu-ln.rg .gx-lu-cells { position: relative; }
+#gx-lu .gx-lu-ln.rg .gx-lu-cells i { background: rgba(232, 196, 106, .22); }
+#gx-lu .gx-lu-ln.rg .gx-lu-cells i.l1 { background: rgba(255, 181, 71, .85); }
+#gx-lu .gx-lu-ln.rg .gx-lu-cells i.l2 { background: rgba(255, 77, 109, .9); }
+#gx-lu .gx-lu-ln.rg .gx-lu-cells i.nd { background: repeating-linear-gradient(135deg, rgba(150, 170, 255, .1) 0 3px, transparent 3px 6px); }
+#gx-lu .gx-lu-ln.rg .gx-lu-cells i.d1 { box-shadow: inset 2px 0 0 rgba(255, 255, 255, .55); }
+#gx-lu .gx-lu-dl { position: absolute; top: 50%; transform: translate(-50%, -50%); font: 700 10px/1 "JetBrains Mono", Consolas, monospace;
+  color: #f0d68e; background: rgba(11, 13, 42, .75); padding: 2px 5px; border-radius: 5px; white-space: nowrap; pointer-events: none; }
+#gx-lu .gx-lu-cells i.now { outline: 1.5px solid #ff9be6; outline-offset: 1px; }
+#gx-lu.gx-lu-in .gx-lu-cells i { animation: gx-lu-grow .6s cubic-bezier(.2, .8, .2, 1) both; animation-delay: calc(var(--d) * 18ms + .2s); }
+@keyframes gx-lu-grow { from { transform: scaleY(.2); opacity: 0; } }
+/* Rahmen-Maße: 3 Spuren à 44 px, Lücke 10 px.
+   Lüften: 3*44 + 2*10 + 10 = 162 (top -6px). UV: Oberkante 3*44 + 3*10 - 4 = 158, Höhe 52. */
+#gx-lu .gx-lu-fr { position: absolute; top: -6px; height: 162px; border: 1.5px dashed rgba(127, 220, 255, .75); border-radius: 8px; pointer-events: none; }
+#gx-lu .gx-lu-fr.u { top: 158px; height: 52px; border-color: rgba(255, 213, 154, .6); }
+#gx-lu .gx-lu-fr span { position: absolute; top: -15px; left: 50%; transform: translateX(-50%); white-space: nowrap;
+  font: 700 9.5px/1 "JetBrains Mono", Consolas, monospace; letter-spacing: 1px; color: #9ff0ff; text-transform: uppercase; }
+#gx-lu .gx-lu-fr.u span { top: -13px; color: #ffd59a; background: #0b0d2a; padding: 0 4px; }
+#gx-lu .gx-lu-ax { position: relative; height: 14px; margin: 18px 0 0 var(--lx); }
+#gx-lu .gx-lu-ax span { position: absolute; transform: translateX(-50%); font: 500 10px/1 "JetBrains Mono", Consolas, monospace; color: #7f88b8; }
+#gx-lu .gx-lu-ax span:first-child { transform: none; color: #ff9be6; }
+#gx-lu .gx-lu-ax span:last-child { transform: translateX(-100%); }
+#gx-lu .gx-lu-leg { display: flex; gap: 12px; align-items: center; margin: 12px 0 0 var(--lx); font-size: 11px; color: #9aa3cf; }
+#gx-lu .gx-lu-leg i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 5px; vertical-align: -1px; background: rgba(127, 220, 255, .5); }
+#gx-lu .gx-lu-leg i.l1 { background: #ffb547; }
+#gx-lu .gx-lu-leg i.l2 { background: #ff4d6d; }
+#gx-lu .gx-lu-leg .k { margin-left: auto; font: 500 10px/1 "JetBrains Mono", Consolas, monospace; color: #6f78a8; }
+/* Nächste 4 Tage (wie „Wochentage“) */
+#gx-lu .gx-lu-days { flex: none; display: flex; flex-direction: column; gap: 5px; margin: 0; padding: 0; list-style: none; }
+#gx-lu .gx-lu-days li { display: flex; align-items: center; gap: 10px; height: 31px; padding: 0 10px; border-radius: 10px; border: 1px solid transparent; font-size: 13px; transition: background .3s; }
+#gx-lu.gx-lu-in .gx-lu-days li { animation: gx-wx-row .6s cubic-bezier(.2, .8, .2, 1) both; animation-delay: calc(var(--d) * 70ms + .2s); }
+#gx-lu .gx-lu-days li:hover { background: rgba(120, 110, 255, .13); }
+#gx-lu .gx-lu-days .n { font-weight: 700; white-space: nowrap; }
+#gx-lu .gx-lu-days .n small { color: var(--gx-mut); font-weight: 500; margin-left: 4px; }
+#gx-lu .gx-lu-days li.nx { border-color: rgba(150, 170, 255, .3); background: rgba(122, 162, 255, .07); }
+#gx-lu .gx-lu-days li.nx .n { color: var(--gx-c); }
+#gx-lu.warn .gx-lu-days li.nx { border-color: rgba(255, 181, 71, .5); background: rgba(255, 181, 71, .08); }
+#gx-lu.crit .gx-lu-days li.nx { border-color: rgba(255, 77, 109, .55); background: rgba(255, 77, 109, .1); }
+#gx-lu .gx-lu-ps { display: flex; gap: 3px; margin-left: auto; }
+#gx-lu .gx-lu-p { display: inline-flex; align-items: center; justify-content: center; gap: 3px; min-width: 42px; padding: 3px 4px; border-radius: 7px;
+  white-space: nowrap; font: 600 11px/1 "JetBrains Mono", Consolas, monospace; color: #9fb0e8; border: 1px solid rgba(150, 170, 255, .16); background: rgba(122, 162, 255, .06); }
+#gx-lu .gx-lu-p.rg.l0 { color: #d9c48e; border-color: rgba(232, 196, 106, .25); background: rgba(232, 196, 106, .05); }
+#gx-lu .gx-lu-p.nd { opacity: .45; }
+#gx-lu .gx-lu-p.l1 { color: #ffd08a; border-color: rgba(255, 181, 71, .4); background: rgba(255, 181, 71, .08); }
+#gx-lu .gx-lu-p.l2 { color: #ff8fa3; border-color: rgba(255, 77, 109, .5); background: rgba(255, 77, 109, .1); }
+/* schmale Desktops (Spalte „Nächste 4 Tage“ eng): Pillen ohne Icon/Mindestbreite, ohne Datum (Reihenfolge wie die Spuren) */
+@media (min-width: 1181px) and (max-width: 1279px) {
+  #gx-lu .gx-lu-days .gx-lu-p svg { display: none; }
+  #gx-lu .gx-lu-days .gx-lu-p { min-width: 0; }
+  #gx-lu .gx-lu-days .n small { display: none; }
+}
+@media (max-width: 1180px) {
+  #gx-lu .gx-lu-mid { grid-column: 1 / -1; order: 3; margin-top: 16px; padding: 16px 0 16px !important; border-left: 0 !important;
+    border-top: 1px solid rgba(150, 170, 255, .12); }
+}
+
+/* ==============================================================
+   MÜLL-UPDATE (Signal-Azur) – dritte Statusfarbe „Update fällig“
+   Schadstoffplan des Entsorgers (muell-tracker /muell/termine → schad.state):
+   info = neuer Plan online, noch nicht eingespielt (ab SCHAD_CHECK_FROM) → ruhiges
+   Update-Symbol im Reiter + Chip in der Zeitleiste-Kopfzeile;
+   due  = neues Jahr ohne eingespielten Plan → Panel .upd + Reiter .upd
+   (Puls), Symbol blinkt. Abfuhr .warn/.crit haben Vorrang bei Panel- und
+   Reiterfarbe, das Update-Symbol bleibt daneben sichtbar.
+   Farbe #1ab2ff (Text #9fdcff), Animation nur Puls + Blinken (Kanon).
+   Demo: #mudemo=plan | upd | updcrit
+   ============================================================== */
+@keyframes gx-up-pulse {
+  0%, 100% { box-shadow: 0 0 0 1px rgba(26,178,255,.14) inset, 0 0 22px -8px rgba(26,178,255,.45); }
+  50% { box-shadow: 0 0 0 1px rgba(26,178,255,.3) inset, 0 0 40px -4px rgba(26,178,255,.65); }
+}
+#gx-tabs .gx-tab-u { display: grid; place-items: center; flex: none; box-sizing: border-box; width: 20px; height: 20px; margin-left: -2px; border-radius: 999px;
+  color: #1ab2ff; background: rgba(26,178,255,.12); border: 1px solid rgba(26,178,255,.38); }
+#gx-tabs .gx-tab-u svg { width: 12px; height: 12px; }
+#gx-tabs .gx-tab-u.due { animation: gx-up-pulse 2.4s ease-in-out infinite; }
+#gx-tabs .gx-tab-u.due svg { animation: gxClBlink 1.4s ease-in-out infinite; }
+#gx-tabs .gx-tab.upd { color: #9fdcff; animation: gx-up-pulse 2.4s ease-in-out infinite; }
+#gx-tabs .gx-tab.upd .gx-tab-i { color: #1ab2ff; }
+#gx-tabs .gx-tab.on.upd { background: linear-gradient(90deg, rgba(26,178,255,.22), rgba(197,139,255,.1)); }
+#gx-mu.upd { border-color: rgba(26,178,255,.55); animation: gx-wx-in .7s cubic-bezier(.2,.8,.2,1) both, gx-up-pulse 2.4s ease-in-out infinite;
+  background: radial-gradient(ellipse 40% 90% at 0% 50%, rgba(26,178,255,.15), transparent 70%), var(--gx-panel); }
+#gx-mu.upd::before { background: linear-gradient(90deg, transparent, #1ab2ff, #7aa2ff, transparent); }
+#gx-mu .gx-mu-up { margin-left: auto; min-width: 0; display: inline-flex; align-items: center; gap: 6px; padding: 2px 10px 2px 3px; border-radius: 999px;
+  font-size: 11.5px; font-weight: 600; line-height: 1.3; white-space: nowrap; text-decoration: none; letter-spacing: 0; text-transform: none;
+  color: #9fdcff; background: rgba(26,178,255,.1); border: 1px solid rgba(26,178,255,.35); }
+#gx-mu .gx-mu-up span { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+#gx-mu .gx-mu-up em { font-style: normal; }
+#gx-mu .gx-mu-up i { display: grid; place-items: center; flex: none; width: 18px; height: 18px; border-radius: 999px; color: #1ab2ff; background: rgba(26,178,255,.14); }
+#gx-mu .gx-mu-up i svg { width: 12px; height: 12px; }
+#gx-mu a.gx-mu-up:hover { color: #fff; border-color: rgba(26,178,255,.6); }
+#gx-mu .gx-mu-up.due { border-color: rgba(26,178,255,.5); animation: gx-up-pulse 2.4s ease-in-out infinite; }
+#gx-mu .gx-mu-up.due i svg { animation: gxClBlink 1.4s ease-in-out infinite; }
+#gx-mu .gx-mu-list li.sz.upd { opacity: .75; }
+#gx-mu .gx-mu-list li.sz.upd .gx-mu-dot::before { content: "↻"; color: #1ab2ff; font-weight: 700; }   /* statt ☣ – keine Extrabreite */
+/* schmale Desktops: Zeitleisten-Spalte eng → nur „Schadstoffplan <Jahr> fehlt“ */
+@media (min-width: 1181px) and (max-width: 1279px) { #gx-mu .gx-mu-up em { display: none; } }
+#gx-mu .gx-mu-ln.sz.upd { opacity: .85; }
+#gx-mu .gx-mu-ln.sz.upd .w { color: #1ab2ff; border-color: rgba(26,178,255,.45); }

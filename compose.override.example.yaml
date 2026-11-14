@@ -1,0 +1,10 @@
+# Optional. Copy to compose.override.yaml (Compose merges it automatically):
+#   cp compose.override.example.yaml compose.override.yaml && docker compose up -d --build
+#
+# Edit the dashboard live: homepage/config/ (YAML, custom.css, custom.js) is mounted from the
+# working tree over the copy baked into the image. Edit a file, reload the browser.
+# (YAML changes are picked up by Homepage on its own.)
+services:
+  homepage:
+    volumes:
+      - ./homepage/config:/app/config

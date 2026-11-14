@@ -1,0 +1,29 @@
+---
+# For configuration options and examples, please see:
+# https://gethomepage.dev/configs/info-widgets/
+# Layout at the top (placed as a grid by custom.css):
+#   big clock + date
+#   weather deck (custom.js, Open-Meteo) in its own row below
+#   search bar in its own row below
+
+- datetime:
+    text_size: 4xl
+    locale: de
+    format:
+      hour: 2-digit
+      minute: 2-digit
+      hourCycle: h23
+
+- datetime:
+    text_size: md
+    locale: de
+    format:
+      weekday: long
+      day: numeric
+      month: long
+      year: numeric
+
+- search:
+    provider: duckduckgo
+    target: _blank
+    showSearchSuggestions: true

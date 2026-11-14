@@ -1,0 +1,19 @@
+.env
+.env.*
+!.env.example
+compose.override.yaml
+# created by Homepage at start-up when the config folder is mounted
+homepage/config/docker.yaml
+homepage/config/kubernetes.yaml
+homepage/config/proxmox.yaml
+homepage/config/logs/
+*credentials*.json
+auth.json
+__pycache__/
+*.pyc
+*.db
+*.bak
+*.log
+data/
+.DS_Store
+node_modules/

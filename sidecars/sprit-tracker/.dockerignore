@@ -1,0 +1,10 @@
+# Only app.py goes into the image.
+.git
+__pycache__/
+*.pyc
+tests/
+.env
+.env.example
+README.md
+*.db
+data/

@@ -1,0 +1,85 @@
+# Homelab Command Deck – dashboard + gateway + three data sidecars.
+#   cp .env.example .env && docker compose up -d --build   ->  http://localhost:3000
+# Everything is built from this folder; no host paths are mounted (see compose.override.example.yaml for
+# live editing).
+name: homelab-command-deck
+
+x-sidecar: &sidecar
+  restart: unless-stopped
+  healthcheck:
+    test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/health', timeout=3)"]
+    interval: 30s
+    timeout: 5s
+    retries: 3
+    start_period: 10s
+
+services:
+  gateway:
+    build: ./gateway
+    depends_on:
+      homepage:
+        condition: service_healthy
+    ports:
+      - "${PORT:-3000}:80"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1/gateway-health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  homepage:
+    build: ./homepage
+    environment:
+      # Host(:port) the browser uses; Homepage answers "host not allowed" for anything else.
+      HOMEPAGE_ALLOWED_HOSTS: ${HOMEPAGE_ALLOWED_HOSTS:-localhost:${PORT:-3000}}
+      TZ: ${TZ:-Europe/Berlin}
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:3000/api/healthcheck"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+
+  sprit-tracker:
+    <<: *sidecar
+    build: ./sidecars/sprit-tracker
+    environment:
+      TZ: ${TZ:-Europe/Berlin}
+      DEMO: ${DEMO:-1}
+      TK_APIKEY: ${TK_APIKEY:-}
+      STATION_ID: ${STATION_ID:-}
+      STATION_NAME: ${STATION_NAME:-}
+    volumes:
+      - sprit-data:/data
+
+  claude-usage:
+    <<: *sidecar
+    build: ./sidecars/claude-usage
+    environment:
+      TZ: ${TZ:-Europe/Berlin}
+
+  muell-tracker:
+    <<: *sidecar
+    build: ./sidecars/muell-tracker
+    environment:
+      TZ: ${TZ:-Europe/Berlin}
+      DEMO: ${DEMO:-1}
+      ICS_URL: ${ICS_URL:-}
+      ICS_FORM: ${ICS_FORM:-}
+      KIND_MAP: ${KIND_MAP:-}
+      NOTICE_URL: ${NOTICE_URL:-}
+      NOTICE_HEAD: ${NOTICE_HEAD:-}
+      LABEL: ${LABEL:-}
+      SCHAD_ANCHOR: ${SCHAD_ANCHOR:-}
+      SCHAD_DAYS: ${SCHAD_DAYS:-14}
+      SCHAD_ZEIT: ${SCHAD_ZEIT:-9–12 Uhr}
+      SCHAD_PDF: ${SCHAD_PDF:-}
+      SCHAD_CHECK_FROM: ${SCHAD_CHECK_FROM:-12-01}
+    volumes:
+      - muell-data:/data
+
+volumes:
+  sprit-data:
+  muell-data:
